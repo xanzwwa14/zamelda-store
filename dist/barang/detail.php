@@ -9,16 +9,22 @@ class barangBase {
     }
 
     protected function getBarangById($idBarang) {
+        // Hindari SQL Injection
+        $idBarang = mysqli_real_escape_string($this->kon, $idBarang);
+
         $sql = "SELECT * FROM barang p 
                 INNER JOIN kategoribarang k ON k.idKategori = p.kodeKategori 
-                WHERE p.idBarang = $idBarang LIMIT 1";
+                WHERE p.idBarang = '$idBarang' LIMIT 1";
+
         $hasil = mysqli_query($this->kon, $sql);
+        if (!$hasil) {
+            die("Query error: " . mysqli_error($this->kon));
+        }
         return mysqli_fetch_array($hasil);
     }
 }
 
 class barangDetails extends barangBase {
-
     public function displayDetails($idBarang) {
         $data = $this->getBarangById($idBarang);
 
@@ -34,7 +40,7 @@ class barangDetails extends barangBase {
 
         echo '<div class="row">';
         echo '<div class="col-sm-6">';
-        echo '<img class="card-img-top" src="gambar/gambar/' . $data['gambarBarang'] . '" alt="Card image">';
+        echo '<img class="card-img-top" src="gambar/gambar/' . $data['gambarBarang'] . '" alt="Gambar Barang">';
         echo '</div>';
         echo '<div class="col-sm-6">';
         echo '<table class="table">';
@@ -43,8 +49,7 @@ class barangDetails extends barangBase {
         echo '<tr><td>Kategori</td><td>: ' . $data['namaKategoriBarang'] . '</td></tr>';
         echo '<tr><td>Jumlah Stok</td><td>: ' . $data['stok'] . '</td></tr>';
 
-
-        if ($data['stok'] >= 1 && ($_SESSION['level'] == 'Pelanggan' || $_SESSION['level'] == 'pelanggan')) {
+        if ($data['stok'] >= 1 && (isset($_SESSION['level']) && strtolower($_SESSION['level']) === 'pelanggan')) {
             echo '<tr><td colspan="2"><a href="index.php?page=keranjang&kodeBarang=' . $data['kodeBarang'] . '&aksi=pilih_barang" class="btn btn-dark btn-block">Masukan Keranjang</a></td></tr>';
         }
 
@@ -56,9 +61,16 @@ class barangDetails extends barangBase {
     }
 }
 
+// Koneksi
 include '../../config/database.php';
 
-$idBarang = $_POST["idBarang"];
+// Cek idBarang dari berbagai kemungkinan sumber
+$idBarang = $idBarang ?? $_GET['idBarang'] ?? $_POST['idBarang'] ?? null;
+
+if (empty($idBarang)) {
+    echo "<div class='alert alert-danger'>ID Barang tidak ditemukan di URL atau form.</div>";
+    exit;
+}
 
 $barang = new barangDetails($kon);
 ?>

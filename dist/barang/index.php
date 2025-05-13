@@ -7,9 +7,9 @@
 
 <main>
     <div class="container-fluid">
-        <h2 class="mt-4">Data Pustaka</h2>
+        <h2 class="mt-4">Data Barang</h2>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Data Pustaka</li>
+            <li class="breadcrumb-item active">Data Barang</li>
         </ol>
 
         <?php

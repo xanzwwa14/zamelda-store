@@ -1,8 +1,13 @@
 <?php
 session_start();
 include "../config/database.php";
-$query = mysqli_query($kon, "SELECT gambarBarang FROM barang LIMIT 10");
-?>
+<?php while ($data = mysqli_fetch_assoc($query)): ?>
+    <a href="barang/detail.php?idBarang=<?php echo urlencode($data['idBarang']); ?>">
+        <img src="barang/gambar/<?php echo htmlspecialchars($data['gambarBarang']); ?>" alt="koleksi" class="gallery-item">
+    </a>
+<?php endwhile;
+ ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
