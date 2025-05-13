@@ -9,11 +9,10 @@ class barangBase {
     }
 
     protected function getBarangById($idBarang) {
-        // Hindari SQL Injection
         $idBarang = mysqli_real_escape_string($this->kon, $idBarang);
 
         $sql = "SELECT * FROM barang p 
-                INNER JOIN kategoribarang k ON k.idKategori = p.kodeKategori 
+                INNER JOIN kategoribarang k ON k.kodeKategori = p.kodeKategori 
                 WHERE p.idBarang = '$idBarang' LIMIT 1";
 
         $hasil = mysqli_query($this->kon, $sql);
@@ -40,13 +39,13 @@ class barangDetails extends barangBase {
 
         echo '<div class="row">';
         echo '<div class="col-sm-6">';
-        echo '<img class="card-img-top" src="gambar/gambar/' . $data['gambarBarang'] . '" alt="Gambar Barang">';
+        echo '<img class="card-img-top img-fluid" src="../dist/barang/gambar/' . htmlspecialchars($data['gambarBarang']) . '" alt="' . htmlspecialchars($data['namaBarang']) . '">';
         echo '</div>';
         echo '<div class="col-sm-6">';
         echo '<table class="table">';
         echo '<tbody>';
         echo '<tr><td>Judul</td><td>: ' . $data['namaBarang'] . '</td></tr>';
-        echo '<tr><td>Kategori</td><td>: ' . $data['namaKategoriBarang'] . '</td></tr>';
+        echo '<tr><td>Kategori</td><td>: ' . $data['namaKategori'] . '</td></tr>';
         echo '<tr><td>Jumlah Stok</td><td>: ' . $data['stok'] . '</td></tr>';
 
         if ($data['stok'] >= 1 && (isset($_SESSION['level']) && strtolower($_SESSION['level']) === 'pelanggan')) {
@@ -61,10 +60,8 @@ class barangDetails extends barangBase {
     }
 }
 
-// Koneksi
 include '../../config/database.php';
 
-// Cek idBarang dari berbagai kemungkinan sumber
 $idBarang = $idBarang ?? $_GET['idBarang'] ?? $_POST['idBarang'] ?? null;
 
 if (empty($idBarang)) {

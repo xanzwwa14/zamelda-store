@@ -15,7 +15,7 @@ session_start();
 
             $kodeBarang=input($_POST["kodeBarang"]);
             $namaBarang=$_POST["namaBarang"];
-            $kodeKategori=input($_POST["kodeKategori"]);
+            $kodeKategori=input($_POST["kategoriBarang"]); 
             $stok=input($_POST["stok"]);
 
             $ekstensi_diperbolehkan	= array('png','jpg');
@@ -39,7 +39,7 @@ session_start();
                 ('$kodeBarang','$namaBarang','$kodeKategori','$gambarBarang','$stok')";
             }
 
-            $simpan_barang=mysqli_query($kon,$sql);#benerin
+            $simpan_barang=mysqli_query($kon,$sql);
         
 
             if ($simpan_barang) {
@@ -58,7 +58,7 @@ session_start();
       $idBarang = $data['kodeTerbesar'];
       $idBarang++;
       $huruf = "br";
-      $kodeBarang = $huruf . sprintf("%02s", $idBarang);
+      $kodeBarang = $huruf . sprintf("%03s", $idBarang);
 
 ?>
 <form action="barang/tambah.php" method="post" enctype="multipart/form-data">

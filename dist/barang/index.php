@@ -31,7 +31,6 @@
             }    
             }
             if (isset($_GET['hapus'])) {
-            //Mengecek notifikasi hapus
             if ($_GET['hapus']=='berhasil'){
                 echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data Barang telah dihapus!</div>";
             }else if ($_GET['hapus']=='gagal'){

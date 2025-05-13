@@ -1,13 +1,8 @@
 <?php
 session_start();
 include "../config/database.php";
-<?php while ($data = mysqli_fetch_assoc($query)): ?>
-    <a href="barang/detail.php?idBarang=<?php echo urlencode($data['idBarang']); ?>">
-        <img src="barang/gambar/<?php echo htmlspecialchars($data['gambarBarang']); ?>" alt="koleksi" class="gallery-item">
-    </a>
-<?php endwhile;
- ?>
-
+$query = mysqli_query($kon, "SELECT gambarBarang FROM barang LIMIT 10");
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +10,6 @@ include "../config/database.php";
     <meta charset="UTF-8">
     <title>Zamelda Store - Selamat Datang</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Menambahkan Font Awesome CDN untuk ikon sosial media -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>

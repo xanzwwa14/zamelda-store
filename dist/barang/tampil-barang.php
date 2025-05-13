@@ -1,76 +1,91 @@
 <?php
 session_start();
-$kategori="";
+include '../../config/database.php';
+
+$kategori = "";
 
 if (isset($_POST['kategoriBarang'])) {
-	foreach ($_POST['kategoriBarang'] as $value)
-	{
-		$kategori .= "'$value'". ",";
-	}
-	$kategori = substr($kategori,0,-1);
-}else {
-    $kategori = "0"; 
+    foreach ($_POST['kategoriBarang'] as $value) {
+        $kategori .= "'$value',";
+    }
+    $kategori = rtrim($kategori, ',');
+} else {
+    $kategori = "0";
 }
+
+$sql = isset($_POST['kodeKategori']) ?
+    "SELECT * FROM barang WHERE kodeKategori IN ($kategori)" :
+    "SELECT * FROM barang";
+
+$hasil = mysqli_query($kon, $sql);
+$cek = mysqli_num_rows($hasil);
+
+if ($cek <= 0) {
+    echo "<div class='col-sm-12'><div class='alert alert-warning'>Data tidak ditemukan!</div></div>";
+    exit;
+}
+
+$barangs = mysqli_fetch_all($hasil, MYSQLI_ASSOC);
 ?>
 
-<div class="row">
-    <div class="col-sm-2">
-        <div class="form-group">
-        <?php 
-            if ($_SESSION['level']=='Penjual' or $_SESSION['level']=='penjual'):
-        ?>
-            <button type="button" id="btn-tambah-barang" class="btn btn-warning"><span class="text"><i class="fas fa-book fa-sm"></i> Tambah barang</span></button>
-        <?php endif; ?>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-
-<?php         
-    include '../../config/database.php';
-
-    if (isset($_POST['kodeKategori'])) {
-        $sql = "SELECT * FROM barang WHERE kodeKategori IN ($kategori)";
-    } else {
-        $sql = "SELECT * FROM barang";
-    }
-
-    $hasil = mysqli_query($kon, $sql);
-    $cek = mysqli_num_rows($hasil);
-
-    if ($cek<=0){
-        echo"<div class='col-sm-12'><div class='alert alert-warning'>Data tidak ditemukan!</div></div>";
-        exit;
-    }
-    $no=0;
-    while ($data = mysqli_fetch_array($hasil)):
-    $no++;
-?>
-<div class="col-sm-2">
-    <div class="card">
-
-        <div class="card bg-basic">
-            <img class="card-img-top img-fluid" src="../dist/barang/gambar/<?php echo $data['gambarBarang']; ?>" alt="Card image cap">
-            <div class="card-body text-center">
-            <?php 
-                if ($_SESSION['level']=='Penjual' or $_SESSION['level']=='penjual'):
-            ?>
-                <button  type="button" class="btn-detail-barang btn btn-light" idBarang="<?php echo $data['idBarang'];?>"  kodeBarang="<?php echo $data['kodeBarang'];?>" ><span class="text"><i class="fas fa-mouse-pointer"></i></span></button>
-				<button  type="button" class="btn-edit-barang btn btn-light" idBarang="<?php echo $data['idBarang'];?>" kodeBarang="<?php echo $data['kodeBarang'];?>" ><span class="text"><i class="fas fa-edit"></i></span></button>
-				<a href="barang/hapus.php?idBarang=<?php echo $data['idBarang']; ?>&gambarBarang=<?php echo $data['gambarBarang']; ?>" class="btn-hapus btn btn-light" ><i class="fa fa-trash"></i></a>
-            <?php endif; ?>
-            <?php 
-                if ($_SESSION['level']=='Pelanggan' or $_SESSION['level']=='pelanggan'):
-            ?>
-             <button  type="button" class="btn-detail-barang btn btn-warning btn-block" id_pustaka="<?php echo $data['idBarang'];?>"  kodeBarang="<?php echo $data['kodeBarang'];?>" ><span class="text">Lihat</span></button>
-            <?php endif; ?>
+<?php if ($_SESSION['level'] === 'Penjual' || $_SESSION['level'] === 'penjual'): ?>
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="form-group">
+                <button type="button" id="btn-tambah-barang" class="btn btn-warning">
+                    <i class="fas fa-book fa-sm"></i> Tambah barang
+                </button>
             </div>
         </div>
     </div>
-</div>
-<?php endwhile; ?>
-</div>
+
+    <div class="table-responsive col-sm-12">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No</th>
+                    <th>Gambar</th>
+                    <th>Nama Barang</th>
+                    <th>Stok</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($barangs as $no => $data): ?>
+                    <tr>
+                        <td><?= $no + 1 ?></td>
+                        <td><img src="../dist/barang/gambar/<?= htmlspecialchars($data['gambarBarang']) ?>" width="60"></td>
+                        <td><?= htmlspecialchars($data['namaBarang']) ?></td>
+                        <td><?= htmlspecialchars($data['stok']) ?></td>
+                        <td>
+                            <button type="button" class="btn-detail-barang btn btn-sm btn-info" idBarang="<?= $data['idBarang'] ?>" kodeBarang="<?= $data['kodeBarang'] ?>"><i class="fas fa-eye"></i></button>
+                            <button type="button" class="btn-edit-barang btn btn-sm btn-warning" idBarang="<?= $data['idBarang'] ?>" kodeBarang="<?= $data['kodeBarang'] ?>"><i class="fas fa-edit"></i></button>
+                            <a href="barang/hapus.php?idBarang=<?= $data['idBarang'] ?>&gambarBarang=<?= $data['gambarBarang'] ?>" class="btn-hapus btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+<?php else: ?>
+    <div class="row">
+        <?php foreach ($barangs as $data): ?>
+            <div class="col-sm-2">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="../dist/barang/gambar/<?= htmlspecialchars($data['gambarBarang']) ?>" alt="<?= htmlspecialchars($data['namaBarang']) ?>">
+                    <div class="card-body text-center">
+                        <button type="button" class="btn-detail-barang btn btn-warning btn-block"
+                                idBarang="<?= $data['idBarang'] ?>" 
+                                kodeBarang="<?= $data['kodeBarang'] ?>">
+                            Lihat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 
 
 <!-- Modal -->
@@ -109,7 +124,6 @@ if (isset($_POST['kategoriBarang'])) {
                 document.getElementById("namaBarang").innerHTML='Tambah Barang Baru';
             }
         });
-        // Membuka modal
         $('#modal').modal('show');
     });
 
