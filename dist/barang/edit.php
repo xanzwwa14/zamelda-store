@@ -2,7 +2,6 @@
 session_start();
 include '../../config/database.php';
 
-// Fungsi untuk membersihkan input
 function input($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -10,18 +9,17 @@ function input($data) {
     return $data;
 }
 
-// === PROSES UPDATE JIKA FORM DIKIRIM ===
 if (isset($_POST['edit_barang'])) {
     mysqli_query($kon, "START TRANSACTION");
 
-    $idBarang = input($_POST["idbarang"]);
-    $kodeBarang = input($_POST["kode"]);
-    $kodeKategori = input($_POST["kategori"]);
-    $namaBarang = input($_POST["nama_barang"]);
+    $idBarang = input($_POST["idBarang"]);
+    $kodeBarang = input($_POST["kodeBarang"]);
+    $kodeKategori = input($_POST["kodeKategori"]);
+    $namaBarang = input($_POST["namaBarang"]);
     $gambar_saat_ini = $_POST['gambar_saat_ini'];
     $stok = input($_POST["stok"]);
-    $warna = input($_POST["warna"]);
-    $ukuran = input($_POST["ukuran"]);
+    // $warna = input($_POST["warna"]);
+    // $ukuran = input($_POST["ukuran"]);
 
     $gambar_baru = $_FILES['gambar_baru']['name'];
     $ekstensi_diperbolehkan = array('png', 'jpg');
@@ -30,18 +28,14 @@ if (isset($_POST['edit_barang'])) {
     $ukuran_file = $_FILES['gambar_baru']['size'];
     $file_tmp = $_FILES['gambar_baru']['tmp_name'];
 
-    // Jika user upload gambar baru
     if (!empty($gambar_baru)) {
         if (in_array($ekstensi, $ekstensi_diperbolehkan)) {
             if ($ukuran_file < 2044070) {
-                // Upload file
                 move_uploaded_file($file_tmp, 'gambar/'.$gambar_baru);
-                // Hapus gambar lama jika ada
                 if (file_exists("gambar/".$gambar_saat_ini)) {
                     unlink("gambar/".$gambar_saat_ini);
                 }
 
-                // Update data dengan gambar baru
                 $sql = "UPDATE barang SET
                         kodeBarang='$kodeBarang',
                         kodeKategori='$kodeKategori',
@@ -54,7 +48,6 @@ if (isset($_POST['edit_barang'])) {
             }
         }
     } else {
-        // Update tanpa ubah gambar
         $sql = "UPDATE barang SET
                 kodeBarang='$kodeBarang',
                 kodeKategori='$kodeKategori',
@@ -65,7 +58,6 @@ if (isset($_POST['edit_barang'])) {
                 WHERE idBarang='$idBarang'";
     }
 
-    // Eksekusi query
     $edit_barang = mysqli_query($kon, $sql);
 
     if ($edit_barang) {
@@ -78,17 +70,15 @@ if (isset($_POST['edit_barang'])) {
     exit;
 }
 
-// === TAMPILKAN FORM EDIT ===
 
-if (isset($_GET['id'])) {
-    $idBarang = intval($_GET['id']);
+if (isset($_POST['idBarang'])) {
+    $idBarang = intval($_POST['idBarang']);
 
     if ($idBarang <= 0) {
         echo "ID barang tidak valid.";
         exit;
     }
 
-    // Gunakan prepared statement (jika mysqli mendukung)
     $stmt = $kon->prepare("SELECT * FROM barang WHERE idBarang = ?");
     $stmt->bind_param("i", $idBarang);
     $stmt->execute();
@@ -100,8 +90,8 @@ if (isset($_GET['id'])) {
         $namaBarang = $data['namaBarang'];
         $gambarBarang = $data['gambarBarang'];
         $stok = $data['stok'];
-        $warna = $data['warna'];
-        $ukuran = $data['ukuran'];
+        // $warna = $data['warna'];
+        // $ukuran = $data['ukuran'];
     } else {
         echo "Barang tidak ditemukan.";
         exit;
@@ -114,7 +104,6 @@ if (isset($_GET['id'])) {
 }
 ?>
 
-<!-- Form Edit Barang -->
 <form action="edit.php" method="post" enctype="multipart/form-data">
     <input type="hidden" name="idbarang" value="<?php echo $idBarang; ?>">
     <input type="hidden" name="kode" value="<?php echo $kodeBarang; ?>">
@@ -129,19 +118,19 @@ if (isset($_GET['id'])) {
         <label>Kategori:</label>
         <select name="kategori" class="form-control">
             <?php
-            $sql="SELECT * FROM kategori ORDER BY id_kategori ASC";
+            $sql="SELECT * FROM kategori ORDER BY idKategori ASC";
             $hasil=mysqli_query($kon, $sql);
             while ($kat = mysqli_fetch_array($hasil)):
             ?>
-                <option <?php if ($kodeKategori == $kat['id_kategori']) echo "selected"; ?>
-                    value="<?php echo $kat['id_kategori']; ?>">
-                    <?php echo $kat['nama_kategori']; ?>
+                <option <?php if ($kodeKategori == $kat['idKategori']) echo "selected"; ?>
+                    value="<?php echo $kat['idKategori']; ?>">
+                    <?php echo $kat['namaKategori']; ?>
                 </option>
             <?php endwhile; ?>
         </select>
     </div>
 
-    <div class="form-group">
+    <!-- <div class="form-group">
         <label>Warna:</label>
         <input name="warna" type="text" value="<?php echo $warna; ?>" class="form-control" required>
     </div>
@@ -149,7 +138,7 @@ if (isset($_GET['id'])) {
     <div class="form-group">
         <label>Ukuran:</label>
         <input name="ukuran" type="text" value="<?php echo $ukuran; ?>" class="form-control" required>
-    </div>
+    </div> -->
 
     <div class="form-group">
         <label>Stok:</label>
