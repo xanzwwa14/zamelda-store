@@ -1,44 +1,44 @@
 <script>
-    $('title').text('Data karyawan');
+    $('title').text('Data Penj');S
 </script>
 
 <?php
-    $id_pengguna= $_SESSION["id_pengguna"];
+   // $idPenjual= $_SESSION["idPenjual"];
 
-    if ($_SESSION["level"]!='Karyawan' and $_SESSION["level"]!='karyawan'):
+    if ($_SESSION["level"]!='penjual' and $_SESSION["level"]!='penjual'):
         echo"<div class='alert alert-danger'>Anda tidak punya hak akses</div>";
         exit;
     endif;
 ?>
 <main>
     <div class="container-fluid">
-        <h2 class="mt-4">Data karyawan</h2>
+        <h2 class="mt-4">Data penjual</h2>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Data karyawan</li>
+            <li class="breadcrumb-item active">Data penjual</li>
         </ol>
 
         <?php
-            //Validasi untuk menampilkan pesan pemberitahuan saat user menambah karyawan
+            //Validasi untuk menampilkan pesan pemberitahuan saat user menambah penjual
             if (isset($_GET['add'])) {
                 if ($_GET['add']=='berhasil'){
-                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> data karyawan telah ditambah!</div>";
+                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> data penjual telah ditambah!</div>";
                 }else if ($_GET['add']=='gagal'){
-                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data karyawan gagal ditambahkan!</div>";
+                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data penjual gagal ditambahkan!</div>";
                 }    
             }
 
             if (isset($_GET['edit'])) {
                 if ($_GET['edit']=='berhasil'){
-                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data karyawan telah diupdate!</div>";
+                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data penjual telah diupdate!</div>";
                 }else if ($_GET['edit']=='gagal'){
-                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data karyawan gagal diupdate!</div>";
+                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data penjual gagal diupdate!</div>";
                 }    
             }
             if (isset($_GET['hapus'])) {
                 if ($_GET['hapus']=='berhasil'){
-                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data karyawan telah dihapus!</div>";
+                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data penjual telah dihapus!</div>";
                 }else if ($_GET['hapus']=='gagal'){
-                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data karyawan gagal dihapus!</div>";
+                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data penjual gagal dihapus!</div>";
                 }    
             }
 
@@ -53,19 +53,18 @@
 
         <div class="card mb-4">
           <div class="card-header py-3">
-            <!-- Tombol tambah karyawan -->
+            <!-- Tombol tambah penjual -->
             <button  class="btn-tambah btn btn-dark btn-icon-split"><span class="text">Tambah</span></button>
           </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="tabel_karyawan" width="100%" cellspacing="0">
+                    <table class="table table-bordered" id="tabel_penjual" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>NIP</th>
+                                <th>Kode Penjual</th>
                                 <th>Nama</th>
-                                <th>Jenis Kelamin</th>
-                                <th>Email</th>
+                                <th>Alamat</th>
                                 <th>No Telp</th>
                                 <th width="15%">Aksi</th>
                             </tr>
@@ -75,7 +74,7 @@
                             // include database
                             include '../config/database.php';
                         
-                            $sql="select * from karyawan";
+                            $sql="select * from penjual";
                             $hasil=mysqli_query($kon,$sql);
                             $no=0;
                             //Menampilkan data dengan perulangan while
@@ -84,15 +83,14 @@
                         ?>
                         <tr>
                             <td><?php echo $no; ?></td>
-                            <td><?php echo $data['nip']; ?></td>
-                            <td><?php echo $data['nama_karyawan']; ?></td>
-                            <td><?php echo $data['jk'] == 1 ? 'Laki-laki' : 'Perempuan';?></td>
-                            <td><?php echo $data['email']; ?></td>
-                            <td><?php echo $data['no_telp']; ?></td>
+                            <td><?php echo $data['kodePenjual']; ?></td>
+                            <td><?php echo $data['namaPenjual']; ?></td>
+                            <td><?php echo $data['alamat']; ?></td>
+                            <td><?php echo $data['noTelp']; ?></td>
                             <td>
-                                <button class="setting-akun btn btn-primary btn-circle" kode_karyawan="<?php echo $data['kode_karyawan']; ?>" ><i class="fas fa-user"></i></button>
-                                <button class="btn-edit btn btn-warning btn-circle" id_karyawan="<?php echo $data['id_karyawan']; ?>" kode_karyawan="<?php echo $data['kode_karyawan']; ?>" ><i class="fas fa-edit"></i></button>
-                                <a href="karyawan/hapus.php?id_karyawan=<?php echo $data['id_karyawan']; ?>&kode_karyawan=<?php echo $data['kode_karyawan']; ?>" class="btn-hapus btn btn-danger btn-circle" ><i class="fa fa-trash"></i></a>
+                                <button class="setting-akun btn btn-primary btn-circle" kodePenjual="<?php echo $data['kodePenjual']; ?>" ><i class="fas fa-user"></i></button>
+                                <button class="btn-edit btn btn-warning btn-circle" idPenjual="<?php echo $data['idPenjual']; ?>" kodePenjual="<?php echo $data['kodePenjual']; ?>" ><i class="fas fa-edit"></i></button>
+                                <a href="penjual/hapus.php?idPenjual=<?php echo $data['idPenjual']; ?>&kodePenjual=<?php echo $data['kodePenjual']; ?>" class="btn-hapus btn btn-danger btn-circle" ><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>
                         <!-- bagian akhir (penutup) while -->
@@ -131,22 +129,22 @@
 
 <script>
     $(document).ready(function(){
-        $('#tabel_karyawan').DataTable();
+        $('#tabel_penjual').DataTable();
     });
 </script>
 
 <script>
 
-    // Tambah karyawan
+    // Tambah penjual
     $('.btn-tambah').on('click',function(){
         var level = $(this).attr("level");
         $.ajax({
-            url: 'karyawan/tambah.php',
+            url: 'penjual/tambah.php',
             method: 'post',
             data: {level:level},
             success:function(data){
                 $('#tampil_data').html(data);  
-                document.getElementById("judul").innerHTML='Tambah karyawan';
+                document.getElementById("judul").innerHTML='Tambah penjual';
             }
         });
         // Membuka modal
@@ -154,32 +152,32 @@
     });
 
 
-    // fungsi edit karyawan
+    // fungsi edit penjual
     $('.btn-edit').on('click',function(){
 
-        var id_karyawan = $(this).attr("id_karyawan");
-        var kode_karyawan = $(this).attr("kode_karyawan");
+        var id_penjual = $(this).attr("id_penjual");
+        var kode_penjual = $(this).attr("kode_penjual");
         $.ajax({
-            url: 'karyawan/edit.php',
+            url: 'penjual/edit.php',
             method: 'post',
-            data: {id_karyawan:id_karyawan},
+            data: {id_penjual:id_penjual},
             success:function(data){
                 $('#tampil_data').html(data);  
-                document.getElementById("judul").innerHTML='Edit karyawan #'+kode_karyawan;
+                document.getElementById("judul").innerHTML='Edit penjual #'+kode_penjual;
             }
         });
             // Membuka modal
         $('#modal').modal('show');
     });
 
-    // fungsi setting akun karyawan
+    // fungsi setting akun penjual
     $('.setting-akun').on('click',function(){
 
-        var kode_karyawan = $(this).attr("kode_karyawan");
+        var kode_penjual = $(this).attr("kode_penjual");
         $.ajax({
-            url: 'karyawan/setting-akun.php',
+            url: 'penjual/setting-akun.php',
             method: 'post',
-            data: {kode_karyawan:kode_karyawan},
+            data: {kode_penjual:kode_penjual},
             success:function(data){
                 $('#tampil_data').html(data);  
                 document.getElementById("judul").innerHTML='Setting Akun';
@@ -190,9 +188,9 @@
     });
 
 
-   // fungsi hapus karyawan
+   // fungsi hapus penjual
    $('.btn-hapus').on('click',function(){
-        konfirmasi=confirm("Yakin ingin menghapus karyawan ini?")
+        konfirmasi=confirm("Yakin ingin menghapus penjual ini?")
         if (konfirmasi){
             return true;
         }else {

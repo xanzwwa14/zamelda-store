@@ -13,18 +13,18 @@ session_start();
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_query($kon,"START TRANSACTION");
 
-            $kode_anggota=input($_POST["kode_anggota"]);
-            $nama_anggota=input($_POST["nama_anggota"]);
+            $kodePelanggan=input($_POST["kodePelanggan"]);
+            $namaPelanggan=input($_POST["namaPelanggan"]);
             $email=input($_POST["email"]);
-            $no_telp=input($_POST["no_telp"]);
+            $noTelp=input($_POST["noTelp"]);
             $alamat=input($_POST["alamat"]);
             $status=input($_POST["status"]);
 
-            // Generate username automatically based on nama_anggota
-            $username = strtolower(str_replace(' ', '_', $nama_anggota));
+            // Generate username automatically based on namaPelanggan
+            $username = strtolower(str_replace(' ', '_', $namaPelanggan));
 
             // Set default password
-            $password = password_hash("12345678", PASSWORD_DEFAULT);
+            $password = input($_POST["password"]);
 
             $ekstensi_diperbolehkan = array('png','jpg','jpeg','gif');
             $foto = $_FILES['foto']['name'];
@@ -66,21 +66,21 @@ session_start();
                 $foto_name = 'foto_default.png';
             }
 
-            $sql = "insert into anggota (kode_anggota, nama_anggota, email, no_telp, alamat, foto) values
-                ('$kode_anggota', '$nama_anggota', '$email', '$no_telp', '$alamat', '$foto_name')";
+            $sql = "insert into pelanggan (kodePelanggan, namaPelanggan, email, noTelp, alamat, foto) values
+                ('$kodePelanggan', '$namaPelanggan', '$email', '$noTelp', '$alamat', '$foto_name')";
 
-            $simpan_anggota = mysqli_query($kon, $sql);
-            $level = "Anggota";
-            $sql1 = "insert into pengguna (kode_pengguna, username, password, status, level) values ('$kode_anggota', '$username', '$password', '$status', '$level')";
+            $simpan_pelanggan = mysqli_query($kon, $sql);
+            $level = "pelanggan";
+            $sql1 = "insert into pengguna (kodePengguna, username, password, status, level) values ('$kodePelanggan', '$username', '$password', '$status', '$level')";
 
             $simpan_pengguna = mysqli_query($kon, $sql1);
 
-            if ($simpan_anggota and $simpan_pengguna) {
+            if ($simpan_pelanggan and $simpan_pengguna) {
                 mysqli_query($kon, "COMMIT");
-                header("Location:../../dist/index.php?page=anggota&add=berhasil");
+                header("Location:../../dist/index.php?page=pelanggan&add=berhasil");
             } else {
                 mysqli_query($kon, "ROLLBACK");
-                header("Location:../../dist/index.php?page=anggota&add=gagal");
+                header("Location:../../dist/index.php?page=pelanggan&add=gagal");
             }
         }
     }
@@ -88,22 +88,22 @@ session_start();
 
 <?php
     include '../../config/database.php';
-    $query = mysqli_query($kon, "SELECT max(id_anggota) as kodeTerbesar FROM anggota");
+    $query = mysqli_query($kon, "SELECT max(idPelanggan) as kodeTerbesar FROM pelanggan");
     $data = mysqli_fetch_array($query);
-    $id_anggota = $data['kodeTerbesar'];
-    $id_anggota++;
+    $idPelanggan = $data['kodeTerbesar'];
+    $idPelanggan++;
     $huruf = "A";
-    $kodeanggota = $huruf . sprintf("%03s", $id_anggota);
+    $kodepelanggan = $huruf . sprintf("%03s", $idPelanggan);
 ?>
-<form action="anggota/tambah.php" method="post" enctype="multipart/form-data">
+<form action="pelanggan/tambah.php" method="post" enctype="multipart/form-data">
     <div class="form-group">
-        <label>Kode anggota:</label>
-        <h3><?php echo $kodeanggota; ?></h3>
-        <input name="kode_anggota" value="<?php echo $kodeanggota; ?>" type="hidden" class="form-control">
+        <label>Kode pelanggan:</label>
+        <h3><?php echo $kodepelanggan; ?></h3>
+        <input name="kodePelanggan" value="<?php echo $kodepelanggan; ?>" type="hidden" class="form-control">
     </div>
     <div class="form-group">
-        <label>Nama anggota:</label>
-        <input name="nama_anggota" type="text" class="form-control" placeholder="Masukan nama" required>
+        <label>Nama pelanggan:</label>
+        <input name="namaPelanggan" type="text" class="form-control" placeholder="Masukan nama" required>
     </div>
 
     <div class="row">
@@ -116,7 +116,7 @@ session_start();
         <div class="col-sm-6">
             <div class="form-group">
                 <label>No Telp:</label>
-                <input name="no_telp" type="text" class="form-control" placeholder="Masukan no telp" required>
+                <input name="noTelp" type="text" class="form-control" placeholder="Masukan no telp" required>
             </div>
         </div>
     </div>
@@ -159,7 +159,7 @@ session_start();
         </div>
     </div>
 
-    <button type="submit" name="simpan_tambah" id="btn-anggota" class="btn btn-dark">Tambah</button>
+    <button type="submit" name="simpan_tambah" id="btn-pelanggan" class="btn btn-dark">Tambah</button>
 </form>
 
 <style>

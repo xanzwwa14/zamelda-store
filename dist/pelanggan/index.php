@@ -1,59 +1,57 @@
 <script>
-    $('title').text('Data anggota');
+    $('title').text('Data pelanggan');
 </script>
 
 <?php
-    $id_pengguna= $_SESSION["id_pengguna"];
+    //$kodePelanggan= $_SESSION["kodepelanggan"];
 
-    if ($_SESSION["level"]!='Karyawan' and $_SESSION["level"]!='karyawan'):
+    if ($_SESSION["level"]!='penjual' and $_SESSION["level"]!='penjual'):
         echo"<div class='alert alert-danger'>Anda tidak punya hak akses</div>";
         exit;
     endif;
 ?>
 <main>
     <div class="container-fluid">
-        <h2 class="mt-4">Data anggota</h2>
+        <h2 class="mt-4">Data pelanggan</h2>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Data anggota</li>
+            <li class="breadcrumb-item active">Data Pelanggan</li>
         </ol>
 
-        <?
-        class DashboardBase {
-            protected $totalPeminjaman = 0;
-            protected $jumlahAnggota = 0;
-            protected $jumlahPustaka = 0;
-        
-            public function getSummary() {
-                return [
-                    'totalPeminjaman' => $this->totalPeminjaman,
-                    'jumlahAnggota' => $this->jumlahAnggota,
-                    'jumlahPustaka' => $this->jumlahPustaka,
-                ];
-            }
-        }
-        ?>
+    <?php
+class DashboardBase {
+    protected $total_transaksi = 0;
+    protected $jumlah_pelanggan = 0;
+    protected $jumlah_barang = 0;
 
-        <?php
+    public function getSummary() {
+        return [
+            'total_transaksi' => $this->total_transaksi,
+            'jumlah_pelanggan' => $this->jumlah_pelanggan,
+            'jumlah_barang' => $this->jumlah_barang,
+        ];
+    }
+}
+
             if (isset($_GET['add'])) {
                 if ($_GET['add']=='berhasil'){
-                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> data anggota telah ditambah!</div>";
+                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> data pelanggan telah ditambah!</div>";
                 }else if ($_GET['add']=='gagal'){
-                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data anggota gagal ditambahkan!</div>";
+                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data pelanggan gagal ditambahkan!</div>";
                 }    
             }
 
             if (isset($_GET['edit'])) {
                 if ($_GET['edit']=='berhasil'){
-                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data anggota telah diupdate!</div>";
+                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data pelanggan telah diupdate!</div>";
                 }else if ($_GET['edit']=='gagal'){
-                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data anggota gagal diupdate!</div>";
+                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data pelanggan gagal diupdate!</div>";
                 }    
             }
             if (isset($_GET['hapus'])) {
                 if ($_GET['hapus']=='berhasil'){
-                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data anggota telah dihapus!</div>";
+                    echo"<div class='alert alert-success'><strong>Berhasil!</strong> Data pelanggan telah dihapus!</div>";
                 }else if ($_GET['hapus']=='gagal'){
-                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data anggota gagal dihapus!</div>";
+                    echo"<div class='alert alert-danger'><strong>Gagal!</strong> Data pelanggan gagal dihapus!</div>";
                 }    
             }
 
@@ -68,12 +66,12 @@
 
         <div class="card mb-4">
           <div class="card-header py-3">
-            <!-- Tombol tambah anggota -->
+            <!-- Tombol tambah pelanggan -->
             <button  class="btn-tambah btn btn-dark btn-icon-split"><span class="text">Tambah</span></button>
           </div>
             <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-bordered" id="tabel_anggota" width="100%" cellspacing="0">
+                  <table class="table table-bordered" id="tabel_pelanggan" width="100%" cellspacing="0">
                       <thead>
                         <tr>
                           <th>No</th>
@@ -88,7 +86,7 @@
                       <tbody>
                           <?php
                               include '../config/database.php';
-                              $sql="select * from anggota order by id_anggota desc";
+                              $sql="select * from pelanggan order by idpelanggan desc";
                               $hasil=mysqli_query($kon,$sql);
                               $no=0;
                             
@@ -97,15 +95,15 @@
                           ?>
                           <tr>
                               <td><?php echo $no; ?></td>
-                              <td><?php echo $data['kode_anggota']; ?></td>
-                              <td><?php echo $data['nama_anggota']; ?></td>
+                              <td><?php echo $data['kodePelanggan']; ?></td>
+                              <td><?php echo $data['namaPelanggan']; ?></td>
                               <td><?php echo $data['email']; ?></td>
-                              <td><?php echo $data['no_telp']; ?></td>
+                              <td><?php echo $data['noTelp']; ?></td>
                               <td><?php echo $data['alamat']; ?></td>
                               <td>
-                                    <button class="setting-akun btn btn-primary btn-circle" kode_anggota="<?php echo $data['kode_anggota']; ?>" ><i class="fas fa-user"></i></button>
-                                    <button class="btn-edit btn btn-warning btn-circle" id_anggota="<?php echo $data['id_anggota']; ?>" kode_anggota="<?php echo $data['kode_anggota']; ?>" ><i class="fas fa-edit"></i></button>
-                                    <a href="anggota/hapus.php?id_anggota=<?php echo $data['id_anggota']; ?>&kode_anggota=<?php echo $data['kode_anggota']; ?>" class="btn-hapus btn btn-danger btn-circle" ><i class="fa fa-trash"></i></a>
+                                    <button class="setting-akun btn btn-primary btn-circle" kodePelanggan="<?php echo $data['kodePelanggan']; ?>" ><i class="fas fa-user"></i></button>
+                                    <button class="btn-edit btn btn-warning btn-circle" idPelanggan="<?php echo $data['idPelanggan']; ?>" kodePelanggan="<?php echo $data['kodePelanggan']; ?>" ><i class="fas fa-edit"></i></button>
+                                    <a href="pelanggan/hapus.php?idPelanggan=<?php echo $data['idPelanggan']; ?>&kodePelanggan=<?php echo $data['kodePelanggan']; ?>" class="btn-hapus btn btn-danger btn-circle" ><i class="fa fa-trash"></i></a>
                               </td>
                           </tr>
                           <?php endwhile; ?>
@@ -119,7 +117,7 @@
 
 <script>
     $(document).ready(function(){
-        $('#tabel_anggota').DataTable();
+        $('#tabel_pelanggan').DataTable();
     });
 </script>
 
@@ -149,16 +147,16 @@
 
 <script>
 
-    // Tambah anggota
+    // Tambah pelanggan
     $('.btn-tambah').on('click',function(){
         var level = $(this).attr("level");
         $.ajax({
-            url: 'anggota/tambah.php',
+            url: 'pelanggan/tambah.php',
             method: 'post',
             data: {level:level},
             success:function(data){
                 $('#tampil_data').html(data);  
-                document.getElementById("judul").innerHTML='Tambah anggota';
+                document.getElementById("judul").innerHTML='Tambah pelanggan';
             }
         });
         // Membuka modal
@@ -166,18 +164,18 @@
     });
 
 
-    // fungsi edit anggota
+    // fungsi edit pelanggan
     $('.btn-edit').on('click',function(){
 
-        var id_anggota = $(this).attr("id_anggota");
-        var kode_anggota = $(this).attr("kode_anggota");
+        var id_pelanggan = $(this).attr("id_pelanggan");
+        var kode_pelanggan = $(this).attr("kode_pelanggan");
         $.ajax({
-            url: 'anggota/edit.php',
+            url: 'pelanggan/edit.php',
             method: 'post',
-            data: {id_anggota:id_anggota},
+            data: {id_pelanggan:id_pelanggan},
             success:function(data){
                 $('#tampil_data').html(data);  
-                document.getElementById("judul").innerHTML='Edit anggota #'+kode_anggota;
+                document.getElementById("judul").innerHTML='Edit pelanggan #'+kode_pelanggan;
             }
         });
             // Membuka modal
@@ -187,11 +185,11 @@
     // Untuk setting username dan password
     $('.setting-akun').on('click',function(){
 
-        var kode_anggota = $(this).attr("kode_anggota");
+        var kode_pelanggan = $(this).attr("kode_pelanggan");
         $.ajax({
-            url: 'anggota/setting-akun.php',
+            url: 'pelanggan/setting-akun.php',
             method: 'post',
-            data: {kode_anggota:kode_anggota},
+            data: {kode_pelanggan:kode_pelanggan},
             success:function(data){
                 $('#tampil_data').html(data);  
                 document.getElementById("judul").innerHTML='Setting Akun';
@@ -201,9 +199,9 @@
         $('#modal').modal('show');
     });
 
-   // fungsi hapus anggota
+   // fungsi hapus pelanggan
    $('.btn-hapus').on('click',function(){
-        konfirmasi=confirm("Yakin ingin menghapus anggota ini?")
+        konfirmasi=confirm("Yakin ingin menghapus pelanggan ini?")
         if (konfirmasi){
             return true;
         }else {

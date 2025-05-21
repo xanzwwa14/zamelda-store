@@ -1,10 +1,10 @@
-<?php
+<?php 
 session_start();
 if (isset($_POST['submit'])) {
-    include '../config/config.php';
+    include '../../config/database.php';
 
     mysqli_query($connection, "START TRANSACTION");
-    
+
     function input($data) {
         $data = trim($data);
         $data = stripslashes($data);
@@ -12,82 +12,82 @@ if (isset($_POST['submit'])) {
         return $data;
     }
 
-    $kodeMember = input($_POST["kodeMember"]);
-    $nama = input($_POST["nama"]);
-    $password = input($_POST["password"]);
+    $kodePelanggan = input($_POST["kodePelanggan"]);
+    $username = input($_POST["username"]);
+    $passwordInput = input($_POST["passwordPelanggan"]);
 
-    $query = mysqli_query($connection, "SELECT passwordMember FROM member WHERE kodeMember='$kodeMember' LIMIT 1");
-    $data = mysqli_fetch_array($query);
+    $query_password = mysqli_query($connection, "SELECT passwordPelanggan FROM pelanggan WHERE kodePelanggan='$kodePelanggan' LIMIT 1");
+    $data = mysqli_fetch_array($query_password);
 
-    if ($data['passwordMember'] == $_POST["password"]) {
-        $passwordMember = input($_POST["password"]);
+    if ($data['passwordPelanggan'] == $passwordInput) {
+        $password = $passwordInput;
     } else {
-        $passwordMember = input($_POST["password"]);
+        $password = $passwordInput; // Bisa tambah hash kalau mau
     }
 
-    $sql = "UPDATE member SET
-        nama='$nama',
-        passwordMember='$passwordMember'
-        WHERE kodeMember='$kodeMember'";
+    $sql = "UPDATE pelanggan SET
+        nama = '$username',
+        passwordPelanggan = '$password'
+        WHERE kodePelanggan = '$kodePelanggan'";
 
-    $update_member = mysqli_query($connection, $sql);
+    $setting_pengguna = mysqli_query($connection, $sql);
 
-    if ($update_member) {
+    if ($setting_pengguna) {
         mysqli_query($connection, "COMMIT");
-        header("Location:../../dist/index.php?page=anggota&setting-akun=berhasil");
+        header("Location: ../../index.php?page=pelanggan&setting-akun=berhasil");
     } else {
         mysqli_query($connection, "ROLLBACK");
-        header("Location:../../dist/index.php?page=anggota&setting-akun=gagal");
+        header("Location: ../../index.php?page=pelanggan&setting-akun=gagal");
     }
+    exit;
 }
 
-//-------------------------------------------------------------------------------------------
+$kodePelanggan = $_POST["kodePelanggan"];
+include '../../config/database.php';
+$query = mysqli_query($connection, "SELECT * FROM pelanggan WHERE kodePelanggan='$kodePelanggan'");
+$data = mysqli_fetch_array($query);
+$username = $data['nama'];
+$password = $data['passwordPelanggan'];
 
-$kodeMember = $_POST["kodeMember"];
-include '../config/config.php';
-$query = mysqli_query($connection, "SELECT * FROM member WHERE kodeMember='$kodeMember'");
-$data = mysqli_fetch_array($query); 
-$nama = $data['nama'];
-$passwordMember = $data['passwordMember'];
-
-if ($nama == null) {
-    echo "<div class='alert alert-warning'>Nama dan password belum di set up.</div>";
+if ($username == null) {
+    echo "<div class='alert alert-warning'>nama dan passwordPelanggan belum di set up.</div>";
 }
 ?>
-<form action="anggota/setting-akun.php" method="post">
 
-<input name="kodeMember" value="<?php echo $kodeMember; ?>" type="hidden" class="form-control">
-<div class="row">
-    <div class="col-sm-6">
-        <div class="form-group">
-            <label>Nama:</label>
-            <input name="nama" value="<?php echo $nama; ?>" id="nama" type="text" class="form-control" placeholder="Masukan nama" required>
-            <div id="info_nama"> </div>
+<form action="pelanggan/setting-akun.php" method="post">
+    <input name="kodePelanggan" value="<?php echo $kodePelanggan; ?>" type="hidden" class="form-control">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>nama:</label>
+                <input name="nama" value="<?php echo $nama; ?>" id="nama" type="text" class="form-control" placeholder="Masukan nama" required>
+                <div id="info_nama"></div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>passwordPelanggan:</label>
+                <input name="passwordPelanggan" value="<?php echo $passwordPelanggan; ?>" type="passwordPelanggan" class="form-control" placeholder="Masukan passwordPelanggan" required>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6">
-        <div class="form-group">
-            <label>Password:</label>
-            <input name="password" value="<?php echo $passwordMember; ?>" type="password" class="form-control" placeholder="Masukan password" required>
-        </div>
-    </div>
-</div>
-<br>
-<button type="submit" name="submit" id="submit" class="btn btn-dark">Submit</button>
+    <br>
+    <button type="submit" name="submit" id="submit" class="btn btn-dark">Submit</button>
 </form>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$("#nama").bind('keyup', function () {
-    var nama = $('#nama').val();
+    $("#nama").bind('keyup', function () {
+        var nama = $('#nama').val();
 
-    $.ajax({
-        url: 'anggota/cek-nama.php',
-        method: 'POST',
-        data: {nama: nama},
-        success: function(data) {
-            $('#info_nama').show();
-            $('#info_nama').html(data);
-        }
-    }); 
-});
+        $.ajax({
+            url: 'pelanggan/cek-nama.php',
+            method: 'POST',
+            data: {nama: nama},
+            success: function(data) {
+                $('#info_nama').show();
+                $('#info_nama').html(data);
+            }
+        }); 
+    });
 </script>
