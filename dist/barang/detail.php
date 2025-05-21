@@ -58,8 +58,8 @@ class BarangDetailCarousel {
             echo "<p><strong>Harga:</strong> Rp" . number_format($varian['harga'], 0, ',', '.') . "</p>";
 
             if (strtolower($_SESSION['level'] ?? '') === 'pelanggan' && $varian['stok'] > 0) {
-                $link = "index.php?page=keranjang&kodeBarang=" . urlencode($barang['kodeBarang']) . "&idVarian=" . $varian['idVarian'] . "&aksi=pilih_barang";
-                echo "<a href='$link' class='btn btn-dark btn-block'>Tambah ke Keranjang</a>";
+                echo "<a href='index.php?page=keranjang&kodeBarang={$barang['kodeBarang']}&kodeVarian={$varian['kodeVarian']}' class='btn btn-primary btn-sm'>";
+                echo "<i class='fas fa-cart-plus'></i> Tambah ke Keranjang</a>";
             } elseif ($varian['stok'] <= 0) {
                 echo "<div class='alert alert-warning p-1 text-center'>Stok Kosong</div>";
             }

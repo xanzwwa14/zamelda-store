@@ -56,7 +56,7 @@
                                     <?php endif; ?>
 
                                     <?php 
-                                        if ($_SESSION["level"]=='pelanggan' or $_SESSION["level"]=='pelanggan'):
+                                        if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'):
                                     ?>
                                     <img class="card-img-top img-fluid" src="pelanggan/foto/<?= htmlspecialchars($data['foto']) ?>" alt="<?= htmlspecialchars($data['namaPelanggan']) ?>">
                                     <?php endif; ?>
@@ -72,6 +72,7 @@
                                                     <td width="80%">: <?php echo $data['kodePengguna'];?></td>
                                                 </tr>
                                                 <tr>
+                                                    <!-- <?php echo 'Level Anda: ' . $_SESSION["level"]; ?> -->
                                                     <td>Nama</td>
                                                     <?php if ($_SESSION["level"]=='Penjual' or $_SESSION["level"]=='penjual'):?>
                                                     <td width="80%">: <?php echo $data['namaPenjual'];?></td>
@@ -90,7 +91,7 @@
                                                     <td>No Telp</td>
                                                     <td width="80%">: <?php echo $data['noTelp'];?></td>
                                                 </tr>
-                                                <?php if ($_SESSION["level"]=='pelanggan' or $_SESSION["level"]=='pelanggan'):?>
+                                                <?php if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'):?>
                                                 <tr>
                                                     <td>Alamat</td>
                                                     <td width="80%">: <?php echo $data['alamat'];?></td>
@@ -185,7 +186,7 @@
 
 
                                 <?php 
-                                if ($_SESSION["level"]=='pelanggan' or $_SESSION["level"]=='pelanggan'):
+                                if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'):
                             ?>
                                 <div class="row">
                                     <div class="col-sm-6">

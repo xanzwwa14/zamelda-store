@@ -1,5 +1,5 @@
 <?php
-    $host="localhost:3306s";
+    $host="localhost:3307";
     $user="root";
     $password="";
     $db="zamalda";

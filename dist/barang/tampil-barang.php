@@ -65,6 +65,7 @@ $barangs = mysqli_fetch_all($hasil, MYSQLI_ASSOC);
                             <button type="button" class="btn-detail-barang btn btn-sm btn-info" idBarang="<?= $data['idBarang'] ?>" kodeBarang="<?= $data['kodeBarang'] ?>"><i class="fas fa-eye"></i></button>
                             <button type="button" class="btn-edit-barang btn btn-sm btn-warning" idBarang="<?= $data['idBarang'] ?>" kodeBarang="<?= $data['kodeBarang'] ?>"><i class="fas fa-edit"></i></button>
                             <a href="barang/hapus.php?idBarang=<?= $data['idBarang'] ?>&gambarBarang=<?= $data['gambarBarang'] ?>" class="btn-hapus btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>
