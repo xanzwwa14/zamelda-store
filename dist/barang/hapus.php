@@ -1,30 +1,29 @@
 <?php
-    session_start();
-    include '../../config/database.php';
+session_start();
+include '../../config/database.php';
 
-    mysqli_query($kon,"START TRANSACTION");
+mysqli_query($kon, "START TRANSACTION");
 
-    $id_pustaka=$_GET["id_pustaka"];
-    $gambar_pustaka=$_GET["gambar_pustaka"];
+$idBarang = $_GET["idBarang"];
+$gambarBarang = $_GET["gambarBarang"];
 
-    $sql="delete from pustaka where id_pustaka='$id_pustaka'";
-    $hapus_pustaka=mysqli_query($kon,$sql);
+$result = mysqli_query($kon, "SELECT kodeBarang FROM barang WHERE idBarang='$idBarang'");
+$data = mysqli_fetch_array($result);
+$kodeBarang = $data['kodeBarang'];
 
-    //Menghapus file foto jika foto selain gambar default
-    if ($gambar_pustaka!='gambar_default.png'){
-        unlink("gambar/".$gambar_pustaka);
-    }
+$hapus_varian = mysqli_query($kon, "DELETE FROM varianbarang WHERE kodeBarang='$kodeBarang'");
 
-    //Kondisi apakah berhasil atau tidak dalam mengeksekusi query-query diatas
-    if ($hapus_pustaka) {
-        mysqli_query($kon,"COMMIT");
-        header("Location:../../dist/index.php?page=pustaka&hapus=berhasil");
-    }
-    else {
-        mysqli_query($kon,"ROLLBACK");
-        header("Location:../../dist/index.php?page=pustaka&hapus=gagal");
+$hapus_barang = mysqli_query($kon, "DELETE FROM barang WHERE idBarang='$idBarang'");
 
-    }
+if ($gambarBarang != 'gambar_default.png') {
+    unlink("gambar/" . $gambarBarang);
+}
 
+if ($hapus_barang && $hapus_varian) {
+    mysqli_query($kon, "COMMIT");
+    header("Location:../../dist/index.php?page=barang&hapus=berhasil");
+} else {
+    mysqli_query($kon, "ROLLBACK");
+    header("Location:../../dist/index.php?page=barang&hapus=gagal");
+}
 ?>
-

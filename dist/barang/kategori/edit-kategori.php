@@ -14,7 +14,7 @@ session_start();
         $idKategori=input($_POST["idKategori"]);
         $namaKategori=input($_POST["namaKategori"]);
         
-        $sql="update kategoribuku set
+        $sql="update kategoribarang set
         namaKategori='$namaKategori'
         where idKategori=$idKategori";
  
@@ -32,7 +32,7 @@ session_start();
 
     //-------------------------------------------------------------------------------------------
 
-    $idKegori=$_POST["idKategori"];
+    $idKategori=$_POST["idKategori"];
     include '../../../config/database.php';
     $query = mysqli_query($kon, "SELECT * FROM kategoribarang where idKategori=$idKategori");
     $data = mysqli_fetch_array($query); 

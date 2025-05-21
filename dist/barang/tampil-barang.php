@@ -14,8 +14,14 @@ if (isset($_POST['kategoriBarang'])) {
 }
 
 $sql = isset($_POST['kodeKategori']) ?
-    "SELECT * FROM barang WHERE kodeKategori IN ($kategori)" :
-    "SELECT * FROM barang";
+    "SELECT b.idBarang, b.kodeBarang, b.namaBarang,
+        (SELECT vv.gambarBarang FROM varianbarang vv WHERE vv.kodeBarang = b.kodeBarang ORDER BY vv.idVarian ASC LIMIT 1) AS gambarBarang
+     FROM barang b
+     WHERE b.kodeKategori IN ($kategori)" :
+    "SELECT b.idBarang, b.kodeBarang, b.namaBarang,
+        (SELECT vv.gambarBarang FROM varianbarang vv WHERE vv.kodeBarang = b.kodeBarang ORDER BY vv.idVarian ASC LIMIT 1) AS gambarBarang
+     FROM barang b";
+
 
 $hasil = mysqli_query($kon, $sql);
 $cek = mysqli_num_rows($hasil);
@@ -46,7 +52,6 @@ $barangs = mysqli_fetch_all($hasil, MYSQLI_ASSOC);
                     <th>No</th>
                     <th>Gambar</th>
                     <th>Nama Barang</th>
-                    <th>Stok</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -56,7 +61,6 @@ $barangs = mysqli_fetch_all($hasil, MYSQLI_ASSOC);
                         <td><?= $no + 1 ?></td>
                         <td><img src="../dist/barang/gambar/<?= htmlspecialchars($data['gambarBarang']) ?>" width="60"></td>
                         <td><?= htmlspecialchars($data['namaBarang']) ?></td>
-                        <td><?= htmlspecialchars($data['stok']) ?></td>
                         <td>
                             <button type="button" class="btn-detail-barang btn btn-sm btn-info" idBarang="<?= $data['idBarang'] ?>" kodeBarang="<?= $data['kodeBarang'] ?>"><i class="fas fa-eye"></i></button>
                             <button type="button" class="btn-edit-barang btn btn-sm btn-warning" idBarang="<?= $data['idBarang'] ?>" kodeBarang="<?= $data['kodeBarang'] ?>"><i class="fas fa-edit"></i></button>
