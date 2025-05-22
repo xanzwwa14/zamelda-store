@@ -10271,16 +10271,32 @@ body {
   background-color: #e9ecef;
 }
 
-
-.carousel-img {
-    max-height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
+#carouselDetailBarang {
+    position: relative;
+}
+.carousel-control-prev,
+.carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    padding: 10px;
+.carousel-control-prev {
+    left: 10px;
+}
+
+.carousel-control-next {
+    right: 10px;
+}
+
+.img-thumbnail {
+    transition: transform 0.2s ease;
+}
+
+.img-thumbnail:hover {
+    transform: scale(1.05);
+    border: 2px solid #007bff;
 }
