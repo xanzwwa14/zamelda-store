@@ -6,12 +6,10 @@ function input($data) {
     return htmlspecialchars(stripslashes(trim($data)));
 }
 
-if (isset($_POST['edit_barang'])) {
+if (isset($_POST['edit_barang']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     mysqli_query($kon, "START TRANSACTION");
 
-    $idBarang = input($_POST["idBarang"]);
     $kodeBarang = input($_POST["kodeBarang"]);
-    $kodeKategori = input($_POST["kodeKategori"]);
     $namaBarang = input($_POST["namaBarang"]);
     $stok = input($_POST["stok"]);
     $idVarian = input($_POST["idVarian"]);
@@ -59,7 +57,6 @@ if (isset($_POST['edit_barang'])) {
         mysqli_query($kon, "ROLLBACK");
         header("Location:../../dist/index.php?page=barang&edit=gagal");
     }
-    exit;
 }
 
 if (isset($_POST['idBarang'])) {
@@ -101,9 +98,13 @@ if (isset($_POST['idBarang'])) {
     <input type="hidden" name="idVarian" value="<?php echo $idVarian; ?>">
     <input type="hidden" name="kodeBarang" value="<?php echo $kodeBarang; ?>">
     <input type="hidden" name="gambar_saat_ini" value="<?php echo $gambarBarang; ?>">
+>>>>>>> ceeb341c16077fee39f33e460b172b58ed186d4e
 
-    <div class="form-group">
+  <div class="row">
+    <div class="col-sm-10">
+      <div class="form-group">
         <label>Nama Barang:</label>
+=
         <input name="namaBarang" type="text" value="<?php echo $namaBarang; ?>" class="form-control" required>
     </div>
 
@@ -122,21 +123,35 @@ if (isset($_POST['idBarang'])) {
             <?php endwhile; ?>
         </select>
     </div>
+  </div>
 
     <div class="form-group">
         <label>Stok:</label>
-        <input name="stok" type="number" value="<?php echo $stok; ?>" class="form-control" required>
+        <input type="number" name="stok[]" class="form-control" value="<?php echo $varian['stok']; ?>" required>
+      </div>
+      <button type="button" class="btn btn-danger btn-sm remove-varian">Hapus Varian</button>
     </div>
+  </div>
 
-    <div class="form-group">
-        <label>Gambar Saat Ini:</label><br>
-        <img src="gambar/<?php echo $gambarBarang; ?>" width="150" class="img-thumbnail">
-    </div>
+  <button type="button" id="add-varian" class="btn btn-secondary mb-3">+ Tambah Varian</button>
 
-    <div class="form-group">
-        <label>Gambar Baru (Opsional):</label>
-        <input type="file" name="gambar_baru" class="form-control-file">
-    </div>
-
-    <button type="submit" name="edit_barang" class="btn btn-success">Update</button>
+  <div class="form-group">
+    <button type="submit" name="edit_barang" class="btn btn-primary">Update Barang</button>
+  </div>
 </form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $('#add-varian').click(function () {
+    let item = $('.form-varian-item').first().clone();
+    item.find('input').val('');
+    item.find('img').remove(); // remove preview image
+    $('#form-varian').append(item);
+  });
+
+  $('#form-varian').on('click', '.remove-varian', function () {
+    if ($('.form-varian-item').length > 1) {
+      $(this).closest('.form-varian-item').remove();
+    }
+  });
+</script>

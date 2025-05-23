@@ -10274,6 +10274,7 @@ body {
 #carouselDetailBarang {
     position: relative;
 }
+
 .carousel-control-prev,
 .carousel-control-next {
     width: 40px;
@@ -10299,5 +10300,6 @@ body {
 .img-thumbnail:hover {
     transform: scale(1.05);
     border: 2px solid #007bff;
+
 }
 /* //test */
