@@ -8,9 +8,7 @@
             <li class="breadcrumb-item active">Profil</li>
         </ol>
         <?php
-            //Validasi untuk menampilkan pesan pemberitahuan saat user menambah pengguna
             if (isset($_GET['edit'])) {
-                //Mengecek nilai variabel add yang telah di enskripsi dengan method md5()
                 if ($_GET['edit']=='berhasil'){
                     echo"<div class='alert alert-success'><strong>Berhasil!</strong> Profil telah diupdate</div>";
                 }else if ($_GET['edit']=='gagal'){
@@ -21,50 +19,46 @@
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
-                    <!-- Pie Chart -->
                     <div class="col-xl-12 col-lg-5">
                         <div class="card shadow mb-4">
-                        <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                 <h6 class="m-0 font-weight-bold text-primary">Profil Pengguna</h6>
                             </div>
 
-
-
                             <?php 
                                 include '../config/database.php';
-                                $id_pengguna=$_SESSION["id_pengguna"];
+                                $idPengguna=$_SESSION["idPengguna"];
                                 
-                                if ($_SESSION["level"]=='Karyawan' or $_SESSION["level"]=='karyawan'){
+                                if ($_SESSION["level"]=='Penjual' or $_SESSION["level"]=='penjual'){
                                     $sql="select * from pengguna p
-                                    inner join karyawan k on k.kode_karyawan=p.kode_pengguna
-                                    where p.id_pengguna=$id_pengguna limit 1";
+                                    inner join penjual k on k.kodePenjual=p.kodePengguna
+                                    where p.idPengguna=$idPengguna limit 1";
                                 }
                                 
-                                if ($_SESSION["level"]=='Anggota' or $_SESSION["level"]=='anggota'){
+                                if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'){
                                     $sql="select * from pengguna p
-                                    inner join anggota a on a.kode_anggota=p.kode_pengguna
-                                    where p.id_pengguna=$id_pengguna limit 1";
+                                    inner join pelanggan a on a.kodePelanggan=p.kodePengguna
+                                    where p.idPengguna=$idPengguna limit 1";
                                 }
                        
                        
                                 $hasil=mysqli_query($kon,$sql);
                                 $data = mysqli_fetch_array($hasil); 
                             ?>
-                            <!-- Card Body -->
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-sm-3">
                                     <?php 
-                                        if ($_SESSION["level"]=='Karyawan' or $_SESSION["level"]=='karyawan'):
+                                        if ($_SESSION["level"]=='Penjual' or $_SESSION["level"]=='penjual'):
                                     ?>
-                                    <img class="card-img-top" src="karyawan/foto/<?php echo $data['foto'];?>" width="54px" alt="Card image">
+                                    <img class="card-img-top img-fluid" src="penjual/foto/<?= htmlspecialchars($data['foto']) ?>" alt="<?= htmlspecialchars($data['namaPenjual']) ?>">
+                                    <!-- <img class="card-img-top" src="penjual/foto/<?php echo $data['foto'];?>" width="54px" alt="Card image"> -->
                                     <?php endif; ?>
 
                                     <?php 
-                                        if ($_SESSION["level"]=='Anggota' or $_SESSION["level"]=='anggota'):
+                                        if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'):
                                     ?>
-                                    <img class="card-img-top" src="anggota/foto/<?php echo $data['foto'];?>" alt="Card image">
+                                    <img class="card-img-top img-fluid" src="pelanggan/foto/<?= htmlspecialchars($data['foto']) ?>" alt="<?= htmlspecialchars($data['namaPelanggan']) ?>">
                                     <?php endif; ?>
                                     </div>
                                 </div>
@@ -75,16 +69,17 @@
                                             <tbody>
                                                 <tr>
                                                     <td>Kode</td>
-                                                    <td width="80%">: <?php echo $data['kode_pengguna'];?></td>
+                                                    <td width="80%">: <?php echo $data['kodePengguna'];?></td>
                                                 </tr>
                                                 <tr>
+                                                    <!-- <?php echo 'Level Anda: ' . $_SESSION["level"]; ?> -->
                                                     <td>Nama</td>
-                                                    <?php if ($_SESSION["level"]=='Karyawan' or $_SESSION["level"]=='karyawan'):?>
-                                                    <td width="80%">: <?php echo $data['nama_karyawan'];?></td>
+                                                    <?php if ($_SESSION["level"]=='Penjual' or $_SESSION["level"]=='penjual'):?>
+                                                    <td width="80%">: <?php echo $data['namaPenjual'];?></td>
                                                     <?php endif; ?>
 
-                                                    <?php if ($_SESSION["level"]=='Anggota' or $_SESSION["level"]=='anggota'):?>
-                                                    <td width="80%">: <?php echo $data['nama_anggota'];?></td>
+                                                    <?php if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'):?>
+                                                    <td width="80%">: <?php echo $data['namaPelanggan'];?></td>
                                                     <?php endif; ?>
                                                     
                                                 </tr>
@@ -94,25 +89,9 @@
                                                 </tr>
                                                 <tr>
                                                     <td>No Telp</td>
-                                                    <td width="80%">: <?php echo $data['no_telp'];?></td>
+                                                    <td width="80%">: <?php echo $data['noTelp'];?></td>
                                                 </tr>
-                                                <tr>
-                                                    <td>Email</td>
-                                                    <td width="80%">: <?php echo $data['email'];?></td>
-                                                </tr>
-                                                <?php if ($_SESSION["level"]=='Anggota' or $_SESSION["level"]=='anggota'):?>
-                                                <!-- <tr>
-                                                    <td>Tempat Lahir</td>
-                                                    <td width="80%">: <?php echo $data['tempat_lahir'];?></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tanggal Lahir</td>
-                                                    <td width="80%">: <?php echo $data['tanggal_lahir'];?></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Jenis Kelamin</td>
-                                                    <td width="80%">:  <?php echo $data['jenis_kelamin'] == 1 ? 'Laki-laki' : 'Perempuan';?></td>
-                                                </tr> -->
+                                                <?php if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'):?>
                                                 <tr>
                                                     <td>Alamat</td>
                                                     <td width="80%">: <?php echo $data['alamat'];?></td>
@@ -140,16 +119,13 @@
     </div>
 </main>
 
-<!-- The Modal -->
 <div class="modal fade" id="ubah_profil">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Ubah Profil</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <!-- Modal body -->
             <div class="modal-body">
                     <form action="profil/edit-profil.php" method="post" enctype="multipart/form-data">
                         <div class="card">
@@ -157,51 +133,36 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Data Diri</h6>
                             </div>
                             <div class="card-body">
-
-                            <!-- Form edit profil untuk karyawan -->  
+ 
                             <?php 
-                                if ($_SESSION["level"]=='Karyawan' or $_SESSION["level"]=='karyawan'):
+                                if ($_SESSION["level"]=='Penjual' or $_SESSION["level"]=='penjual'):
                             ?>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Kode:</label>
-                                            <input name="kode" value="<?php echo $data['kode_pengguna']?>" type="text" class="form-control" placeholder="Masukan kode" disabled>
-                                            <input name="id_pengguna" value="<?php echo $data['id_pengguna'];?>" type="hidden" class="form-control">
-                                            <input name="id_karyawan" value="<?php echo $data['id_karyawan'];?>" type="hidden" class="form-control">
+                                            <input name="kode" value="<?php echo $data['kodePengguna']?>" type="text" class="form-control" placeholder="Masukan kode" disabled>
+                                            <input name="idPengguna" value="<?php echo $data['idPengguna'];?>" type="hidden" class="form-control">
+                                            <input name="idPenjual" value="<?php echo $data['idPenjual'];?>" type="hidden" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Nama:</label>
-                                             <input name="nama" value="<?php echo $data['nama_karyawan']?>" type="text" class="form-control" placeholder="Masukan nama" required>
+                                             <input name="nama" value="<?php echo $data['namaPenjual']?>" type="text" class="form-control" placeholder="Masukan nama" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Email:</label>
-                                            <input name="email" id="email" value="<?php echo $data['email']?>" type="email" class="form-control" placeholder="Masukan email" required>
-                                        </div>
-                                    </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>No Telp:</label>
-                                            <input name="no_telp" value="<?php echo $data['no_telp']?>" type="text" class="form-control" placeholder="Masukan no telp" required>
+                                            <input name="noTelp" value="<?php echo $data['noTelp']?>" type="text" class="form-control" placeholder="Masukan no telp" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Jenis Kelamin:</label>
-                                            <select class="form-control" name="jk" required>
-                                                <option>Pilih</option>
-                                                <option  <?php if ($data["jk"]==1) echo "selected"; ?> value="1">Laki-laki</option>
-                                                <option  <?php if ($data["jk"]==2) echo "selected"; ?> value="2">Perempuan</option>
-                                            </select>
-                                        </div>
                                         <div class="form-group">
                                             <label>Alamat:</label>
                                             <textarea class="form-control" name="alamat" rows="5" ><?php echo $data['alamat'];?></textarea>
@@ -218,57 +179,36 @@
                                                     <button type="button" id="pilih_foto" class="browse btn btn-dark">Pilih Foto</button>
                                                 </div>
                                             </div>
-                                        <img src="karyawan/foto/<?php echo $data['foto'];?>" width="50%" id="preview" class="img-thumbnail">
+                                        <img src="penjual/foto/<?php echo $data['foto'];?>" width="50%" id="preview" class="img-thumbnail">
                                     </div>
                                 </div>
                                 <?php endif; ?>
 
-                                <!-- Form edit profil untuk anggota -->  
 
                                 <?php 
-                                if ($_SESSION["level"]=='Anggota' or $_SESSION["level"]=='anggota'):
+                                if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'):
                             ?>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Kode:</label>
-                                            <input name="kode_pengguna" value="<?php echo $data['kode_pengguna'];?>" type="text" class="form-control" disabled>
-                                            <input name="id_pengguna" value="<?php echo $data['id_pengguna'];?>" type="hidden" class="form-control">
-                                            <input name="id_anggota" value="<?php echo $data['id_anggota'];?>" type="hidden" class="form-control">
+                                            <input name="kodePengguna" value="<?php echo $data['kodePengguna'];?>" type="text" class="form-control" disabled>
+                                            <input name="idPengguna" value="<?php echo $data['idPengguna'];?>" type="hidden" class="form-control">
+                                            <input name="idPelanggan" value="<?php echo $data['idPelanggan'];?>" type="hidden" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Nama:</label>
-                                             <input name="nama" value="<?php echo $data['nama_anggota'];?>" type="text" class="form-control" placeholder="Masukan nama" required>
+                                             <input name="nama" value="<?php echo $data['namaPelanggan'];?>" type="text" class="form-control" placeholder="Masukan nama" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Email:</label>
-                                            <input name="email" id="email" value="<?php echo $data['email'];?>" type="email" class="form-control" placeholder="Masukan email" required>
-                                        </div>
-                                    </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>No Telp:</label>
-                                            <input name="no_telp" value="<?php echo $data['no_telp'];?>" type="text" class="form-control" placeholder="Masukan no telp" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Tempat Lahir:</label>
-                                            <input name="tempat_lahir" id="tempat_lahir" value="<?php echo $data['tempat_lahir'];?>" type="text" class="form-control" placeholder="Masukan tempat lahir">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Tanggal Lahir:</label>
-                                            <input name="tanggal_lahir" value="<?php echo $data['tanggal_lahir'];?>" type="date" class="form-control" >
+                                            <input name="noTelp" value="<?php echo $data['noTelp'];?>" type="text" class="form-control" placeholder="Masukan no telp" required>
                                         </div>
                                     </div>
                                 </div>
@@ -279,18 +219,7 @@
                                             <textarea class="form-control" name="alamat" rows="5" ><?php echo $data['alamat'];?></textarea>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Jenis Kelamin:</label>
-                                            <select class="form-control" name="jenis_kelamin" required>
-                                                <option>Pilih</option>
-                                                <option  <?php if ($data["jenis_kelamin"]==1) echo "selected"; ?> value="1">Laki-laki</option>
-                                                <option  <?php if ($data["jenis_kelamin"]==2) echo "selected"; ?> value="2">Perempuan</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- rows -->                 
+                                </div>               
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div id="msg"></div>
@@ -303,7 +232,7 @@
                                                         <button type="button" id="pilih_foto" class="browse btn btn-dark">Pilih Foto</button>
                                                 </div>
                                             </div>
-                                        <img src="anggota/foto/<?php echo $data['foto'];?>" width="50%" id="preview" class="img-thumbnail">
+                                        <img src="pelanggan/foto/<?php echo $data['foto'];?>" width="50%" id="preview" class="img-thumbnail">
                                     </div>
                                 </div>
                                 <?php endif; ?>
@@ -322,7 +251,7 @@
                                             <label>Username:</label>
                                             <input name="username_baru" id="username_baru" value="<?php echo $data['username']?>" type="text" class="form-control" placeholder="Masukan username" required>
                                             <input name="username_lama" id="username_lama" value="<?php echo $data['username']?>" type="hidden" class="form-control">
-                                            <!-- Informasi ketersediaan username akan ditampilkan disini -->
+                                         
                                             <div id="info_username"> </div>
                                         </div>
                                     </div>
@@ -333,15 +262,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="id_pengguna" value="<?php echo $data['id_pengguna']?>"/>
+                                <input type="hidden" name="idPengguna" value="<?php echo $data['idPengguna']?>"/>
                                 <button type="submit" name="simpan_profil"  id="simpan_profil" class="btn btn-success" >Simpan</button>
 
                             </div>
                         </div>   
                     </form>
-            <!-- akhir body -->
             </div>
-            <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
@@ -368,10 +295,8 @@
 
     var reader = new FileReader();
     reader.onload = function(e) {
-        // get loaded data and render thumbnail.
         document.getElementById("preview").src = e.target.result;
     };
-    // read the image file as a data URL.
     reader.readAsDataURL(this.files[0]);
     });
 

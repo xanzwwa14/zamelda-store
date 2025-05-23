@@ -10,7 +10,7 @@
 
         <?php if ($_SESSION["level"]=='Penjual' or $_SESSION["level"]=='penjual'):?>
         <div class="row">
-             <?php 
+            <?php 
                 include '../config/database.php';
                 $hasil=mysqli_query($kon,"select kodeTransaksi from detail_transaksi");
                 $total_transaksi = mysqli_num_rows($hasil);   
@@ -74,30 +74,16 @@
         <?php  if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'): ?>
         <div class="row">
              <?php
-                $kodePelanggan=$_SESSION["kodePelanggan"];
+                include '../config/database.php';
+                $kodePelanggan = isset($_SESSION["kodePelanggan"]) ? $_SESSION["kodePelanggan"] : null;
+
 
                 include '../config/database.php';
                 $sql="select p.kodeTransaksi from detail_transaksi d
                 inner join Transaksi p on p.kodeTransaksi=d.kodeTransaksi
                 where p.kodePelanggan='$kodePelanggan' and d.status='0'";
-                $hasil=mysqli_query($kon,$sql);
-                $belum_dibayar = mysqli_num_rows($hasil);   
+                $hasil=mysqli_query($kon,$sql);  
             ?>
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card bg-dark text-white mb-4">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs text-white text-uppercase mb-1">Belum Dibayar</div>
-                        <div class="h5 mb-0 font-weight-bold text-dark-800"><?php echo $belum_dibayar;?></div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fa fa-shopping-bag fa-3x text-dark-300"></i>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
             <?php
                 $sql="select p.kodeTransaksi from detail_transaksi d
                 inner join transaksi p on p.kodeTransaksi=d.kodeTransaksi
@@ -142,12 +128,9 @@
                 </div>
                 </div>
             </div>
-            <?php
-             
-                $sql="select p.kodeTransaksi from detail_transaksi d
-                inner join transaksi p on p.kodeTransaksi=d.kodeTransaksi
-                where p.kodePelanggan='$kodePelanggan' and d.status='2'";
-                $hasil=mysqli_query($kon,$sql);
+            <?php 
+                include '../config/database.php';
+                $hasil=mysqli_query($kon,"select kodeTransaksi from detail_transaksi");
                 $total_transaksi = mysqli_num_rows($hasil);   
             ?>
             <div class="col-xl-3 col-md-6 mb-4">
@@ -155,7 +138,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs text-white text-uppercase mb-1">Total</div>
+                        <div class="text-xs text-white text-uppercase mb-1">Total Transaksi</div>
                         <div class="h5 mb-0 font-weight-bold text-dark-800"><?php echo $total_transaksi; ?></div>
                     </div>
                     <div class="col-auto">

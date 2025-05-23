@@ -1,156 +1,137 @@
 <?php
 session_start();
-    if (isset($_POST['tambah_pelanggan'])) {
-        include '../../config/database.php';
-        
-        function input($data) {
-            $data = trim($data);
-            $data = stripslashes($data);
-            $data = htmlspecialchars($data);
-            return $data;
-        }
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+include '../../config/database.php';
 
-            mysqli_query($kon,"START TRANSACTION");
+function input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
 
-            $kodeBarang=input($_POST["kodeBarang"]);
-            $namaBarang=$_POST["namaBarang"];
-            $kodeKategori=input($_POST["kategoriBarang"]); 
-            $stok=input($_POST["stok"]);
+if (isset($_POST['tambah_pelanggan']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    mysqli_query($kon, "START TRANSACTION");
 
-            $ekstensi_diperbolehkan	= array('png','jpg');
-            $gambarBarang = $_FILES['gambarBarang']['name'];
-            $x = explode('.', $gambarBarang);
-            $ekstensi = strtolower(end($x));
-            $ukuran	= $_FILES['gambarBarang']['size'];
-            $file_tmp = $_FILES['gambarBarang']['tmp_name'];	
+    $kodeBarang = input($_POST["kodeBarang"]);
+    $namaBarang = input($_POST["namaBarang"]);
+    $kodeKategori = input($_POST["kategoriBarang"]);
 
-            if (!empty($gambarBarang)){
-                if(in_array($ekstensi, $ekstensi_diperbolehkan) === true){
-                    if($ukuran < 1044070){	
-                        move_uploaded_file($file_tmp, 'gambar/'.$gambarBarang);
-                        $sql="insert into barang (kodeBarang,namaBarang,kodeKategori,gambarBarang,stok) values
-                        ('$kodeBarang','$namaBarang','$kodeKategori','$gambarBarang','$stok')";
-                    }
-                }
-            }else {
-                $gambarBarang="gambar_default.png";
-                $sql="insert into barang (kodeBarang,namaBarang,kodeKategori,gambarBarang,stok) values
-                ('$kodeBarang','$namaBarang','$kodeKategori','$gambarBarang','$stok')";
-            }
+    $simpan_barang = mysqli_query($kon, "INSERT INTO barang (kodeBarang, namaBarang, kodeKategori) VALUES ('$kodeBarang', '$namaBarang', '$kodeKategori')");
 
-            $simpan_barang=mysqli_query($kon,$sql);
-        
+    $jumlah_varian = count($_FILES['gambarBarang']['name']);
 
-            if ($simpan_barang) {
-                mysqli_query($kon,"COMMIT");
-                header("Location:../../dist/index.php?page=barang&add=berhasil");
-            }
-            else {
-                mysqli_query($kon,"ROLLBACK");
-                header("Location:../../dist/index.php?page=barang&add=gagal");
-            }
+    for ($i = 0; $i < $jumlah_varian; $i++) {
+        $namaFile = $_FILES['gambarBarang']['name'][$i];
+        $tmpName = $_FILES['gambarBarang']['tmp_name'][$i];
+        $ukuran = $_FILES['gambarBarang']['size'][$i];
+        $ekstensi = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+        $allowed_ext = ['png', 'jpg', 'jpeg'];
+
+        if (in_array($ekstensi, $allowed_ext) && $ukuran < 1044070) {
+            $newName = uniqid() . '.' . $ekstensi;
+            move_uploaded_file($tmpName, 'gambar/' . $newName);
+
+            $ukuranVar = input($_POST['ukuran'][$i]);
+            $varian = input($_POST['varian'][$i]);
+            $harga = input($_POST['harga'][$i]);
+            $stok = input($_POST['stok'][$i]);
+
+            $sql_varian = "INSERT INTO variabarang (kodeBarang, gambarBarang, ukuran, varian, harga, stok)
+                           VALUES ('$kodeBarang', '$newName', '$ukuranVar', '$varian', '$harga', '$stok')";
+            mysqli_query($kon, $sql_varian);
         }
     }
-      include '../../config/database.php';
-      $query = mysqli_query($kon, "SELECT max(idBarang) as kodeTerbesar FROM barang");
-      $data = mysqli_fetch_array($query);
-      $idBarang = $data['kodeTerbesar'];
-      $idBarang++;
-      $huruf = "br";
-      $kodeBarang = $huruf . sprintf("%03s", $idBarang);
 
+    if ($simpan_barang) {
+        mysqli_query($kon, "COMMIT");
+        header("Location:../../dist/index.php?page=barang&add=berhasil");
+    } else {
+        mysqli_query($kon, "ROLLBACK");
+        header("Location:../../dist/index.php?page=barang&add=gagal");
+    }
+}
+
+$query = mysqli_query($kon, "SELECT max(idBarang) as kodeTerbesar FROM barang");
+$data = mysqli_fetch_array($query);
+$idBarang = $data['kodeTerbesar'] + 1;
+$kodeBarang = "br" . sprintf("%03s", $idBarang);
 ?>
+
 <form action="barang/tambah.php" method="post" enctype="multipart/form-data">
-
-    <div class="row">
-        <div class="col-sm-10">
-            <div class="form-group">
-                <label>Nama Barang:</label>
-                <input name="namaBarang" type="text" class="form-control" placeholder="Masukan Nama Barang" required>
-            </div>
-        </div>
-        <div class="col-sm-2">
-            <div class="form-group">
-                <label>Kode:</label>
-                <h3><?php echo $kodeBarang; ?></h3>
-                <input name="kodeBarang" value="<?php echo $kodeBarang; ?>" type="hidden" class="form-control">
-            </div>
-        </div>
-    </div>              
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="form-group">
-                <label>Kategori:</label>
-                <select name="kategoriBarang" class="form-control">
-                <?php
-                    $sql="select * from kategoriBarang order by idKategori asc";
-                    $hasil=mysqli_query($kon,$sql);
-                    while ($data = mysqli_fetch_array($hasil)):
-                ?>
-                    <option value="<?php echo $data['idKategori']; ?>"><?php echo $data['namaKategori']; ?></option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label>Jumlah Stok:</label>
-                        <input name="stok" type="number" class="form-control" placeholder="Masukan stok" required>
-                    </div>
-                </div>
-        </div>
+  <div class="row">
+    <div class="col-sm-10">
+      <div class="form-group">
+        <label>Nama Barang:</label>
+        <input name="namaBarang" type="text" class="form-control" required>
+      </div>
     </div>
-    <!-- rows -->   
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="form-group">
-                <div id="msg"></div>
-                <label>Gambar Barang:</label>
-                <input type="file" name="gambarBarang" class="file" >
-                    <div class="input-group my-3">
-                        <input type="text" class="form-control" disabled placeholder="Upload Gambar" id="file">
-                        <div class="input-group-append">
-                            <button type="button" id="pilih_gambar" class="browse btn btn-dark">Pilih Gambar</button>
-                        </div>
-                    </div>
-                <img src="../src/img/img80.png" id="preview" class="img-thumbnail">
-            </div>
-        </div>
+    <div class="col-sm-2">
+      <div class="form-group">
+        <label>Kode:</label>
+        <h4><?php echo $kodeBarang; ?></h4>
+        <input name="kodeBarang" value="<?php echo $kodeBarang; ?>" type="hidden">
+      </div>
     </div>
+  </div>
 
-    <!-- rows -->   
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="form-group">
-             <button type="submit" name="tambah_pelanggan" class="btn btn-success">Tambah</button>
-            </div>
-        </div>
+  <div class="form-group">
+    <label>Kategori:</label>
+    <select name="kategoriBarang" class="form-control">
+      <?php
+      $hasil = mysqli_query($kon, "SELECT * FROM kategoriBarang ORDER BY idKategori ASC");
+      while ($data = mysqli_fetch_array($hasil)):
+      ?>
+      <option value="<?php echo $data['idKategori']; ?>"><?php echo $data['namaKategori']; ?></option>
+      <?php endwhile; ?>
+    </select>
+  </div>
+
+  <hr>
+  <h5>Data Varian Barang</h5>
+  <div id="form-varian">
+    <div class="form-varian-item border p-3 mb-3">
+      <div class="form-group">
+        <label>Gambar Varian:</label>
+        <input type="file" name="gambarBarang[]" required class="form-control-file">
+      </div>
+      <div class="form-group">
+        <label>Ukuran:</label>
+        <input type="text" name="ukuran[]" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Varian:</label>
+        <input type="text" name="varian[]" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Harga:</label>
+        <input type="number" name="harga[]" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Stok:</label>
+        <input type="number" name="stok[]" class="form-control" required>
+      </div>
+      <button type="button" class="btn btn-danger btn-sm remove-varian">Hapus Varian</button>
     </div>
+  </div>
 
+  <button type="button" id="add-varian" class="btn btn-secondary mb-3">+ Tambah Varian</button>
+
+  <div class="form-group">
+    <button type="submit" name="tambah_pelanggan" class="btn btn-success">Tambah Barang</button>
+  </div>
 </form>
 
-<style>
-    .file {
-    visibility: hidden;
-    position: absolute;
-    }
-</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).on("click", "#pilih_gambar", function() {
-    var file = $(this).parents().find(".file");
-    file.trigger("click");
-    });
-    $('input[type="file"]').change(function(e) {
-    var fileName = e.target.files[0].name;
-    $("#file").val(fileName);
+  $('#add-varian').click(function () {
+    let item = $('.form-varian-item').first().clone();
+    item.find('input').val('');
+    $('#form-varian').append(item);
+  });
 
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById("preview").src = e.target.result;
-    };
-    reader.readAsDataURL(this.files[0]);
-    });
+  $('#form-varian').on('click', '.remove-varian', function () {
+    if ($('.form-varian-item').length > 1) {
+      $(this).closest('.form-varian-item').remove();
+    }
+  });
 </script>

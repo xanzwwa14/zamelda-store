@@ -1,7 +1,7 @@
 <?php
 session_start();
 include "../config/database.php";
-$query = mysqli_query($kon, "SELECT gambarBarang FROM barang LIMIT 10");
+$query = mysqli_query($kon, "SELECT gambarBarang FROM varianbarang LIMIT 5");
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ $query = mysqli_query($kon, "SELECT gambarBarang FROM barang LIMIT 10");
 
         .slider-container {
             padding: 60px 40px;
-            background: linear-gradient(rgba(135, 123, 84, 0.6), rgba(0, 0, 0, 0.4)), url('aplikasi/gambar/background.jpg') no-repeat center center;
+            background: linear-gradient(rgba(135, 123, 84, 0.6), rgba(0, 0, 0, 0.4)), url('pantai.JPEG') no-repeat center center;
             background-size: cover;
             text-align: center;
             position: relative;

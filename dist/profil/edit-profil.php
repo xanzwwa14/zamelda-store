@@ -1,13 +1,10 @@
 <?php
 session_start();
     if (isset($_POST['simpan_profil'])) {
-        //Include file koneksi, untuk koneksikan ke database
         include '../../config/database.php';
         //session_start();
-        //Memulai transaksi
         mysqli_query($kon,"START TRANSACTION");
         
-        //Fungsi untuk mencegah inputan karakter yang tidak sesuai
         function input($data) {
             $data = trim($data);
             $data = stripslashes($data);
@@ -15,14 +12,14 @@ session_start();
             return $data;
         }
 
-        if ($_SESSION["level"]=='Anggota' or $_SESSION["level"]=='anggota'){
+        if ($_SESSION["level"]=='Pelanggan' or $_SESSION["level"]=='pelanggan'){
            
-            $id_anggota=$_POST["id_anggota"];
-            $nama=input($_POST["nama"]);
-            $no_telp=input($_POST["no_telp"]);
+            $idPelanggan=$_POST["idPelanggan"];
+            $namaPelanggan=input($_POST["namaPelanggan"]);
+            $noTelp=input($_POST["noTelp"]);
             $email=input($_POST["email"]);
             $alamat=input($_POST["alamat"]);
-            $jenis_kelamin=input($_POST["jenis_kelamin"]);
+            
           
             $foto_saat_ini=$_POST['foto_saat_ini'];
             $foto_baru = $_FILES['foto_baru']['name'];
@@ -33,41 +30,33 @@ session_start();
             $file_tmp = $_FILES['foto_baru']['tmp_name'];
 
             if (!empty($foto_baru)){
-                if(in_array($ekstensi, $ekstensi_diperbolehkan) === true){
-                    //Mengupload foto baru
-                    move_uploaded_file($file_tmp,'../anggota/foto/'.$foto_baru);
-
-                    //Menghapus foto lama, foto yang dihapus selain foto default
+                if(in_array($ekstensi, $ekstensi_diperbolehkan) === true) {
+                    move_uploaded_file($file_tmp,'../pelanggan/foto/'.$foto_baru);
                     if ($foto_saat_ini!='foto_default.png'){
-                        unlink("../anggota/foto/".$foto_saat_ini);
+                        unlink("../pelanggan/foto/".$foto_saat_ini);
                     }
                     
-                    $sql="update anggota set
-                    nama_anggota='$nama',
-                    email='$email',
-                    no_telp='$no_telp',
+                    $sql="update pelanggan set
+                    namaPelanggan='$nama  Pelanggana',
+                    noTelp='$noTelp',
                     alamat='$alamat',
-                    jenis_kelamin='$jenis_kelamin',
                     foto='$foto_baru'
-                    where id_anggota=$id_anggota";
+                    where idPelanggan=$idPelanggan";
                 }
-            }else {
-                $sql="update anggota set
-                nama_anggota='$nama',
-                email='$email',
-                no_telp='$no_telp',
-                alamat='$alamat',
-                jenis_kelamin='$jenis_kelamin'
-                where id_anggota=$id_anggota";
-            }
+            } else {
+                $sql="update pelanggan set
+                namaPelanggan='$namaPelanggana',
+                noTelp='$noTelp',
+                alamat='$alamat'
+                where idPelanggan=$idPelanggan";    
+}
 
-            //Mengeksekusi query 
             $update=mysqli_query($kon,$sql);
 
-            $id_pengguna=$_POST["id_pengguna"];
+            $idPengguna=$_POST["idPengguna"];
             $username=input($_POST["username_baru"]);
 
-            $ambil_password=mysqli_query($kon,"select password from pengguna where id_pengguna=$id_pengguna limit 1");
+            $ambil_password=mysqli_query($kon,"select password from pengguna where idPengguna=$idPengguna limit 1");
             $data = mysqli_fetch_array($ambil_password);
 
             if ($data['password']==$_POST["password"]){
@@ -76,23 +65,20 @@ session_start();
                 $password=md5(input($_POST["password"]));
             }
 
-            //Update username dan password di tabel pengguna
             $sql="update pengguna set
             username='$username',
             password='$password'
-            where id_pengguna=$id_pengguna";
+            where idPengguna=$idPengguna";
             $update_pengguna=mysqli_query($kon,$sql);
 
         }
 
-        if ($_SESSION["level"]=='Karyawan' or $_SESSION["level"]=='karyawan'){
+        if ($_SESSION["level"]=='Penjual' or $_SESSION["level"]=='penjual'){
            
-            $id_karyawan=$_POST["id_karyawan"];
-            $nama=input($_POST["nama"]);
-            $no_telp=input($_POST["no_telp"]);
-            $email=input($_POST["email"]);
-            $jk=input($_POST["jk"]);
-            $alamat=input($_POST["alamat"]);
+            $idPenjual=$_POST["idPenjual"];
+            $namaPenjual = isset($_POST["nama"]) ? input($_POST["nama"]) : '';
+            $noTelp=input($_POST["noTelp"]?? '');
+            $alamat=input($_POST["alamat"]?? '');
 
             $foto_saat_ini=$_POST['foto_saat_ini'];
             $foto_baru = $_FILES['foto_baru']['name'];
@@ -105,43 +91,36 @@ session_start();
             
             if (!empty($foto_baru)){
                 if(in_array($ekstensi, $ekstensi_diperbolehkan) === true){
-                    //Mengupload foto baru
-                    move_uploaded_file($file_tmp,'../karyawan/foto/'.$foto_baru);
+                    move_uploaded_file($file_tmp,'../penjual/foto/'.$foto_baru);
 
 
-                    //Menghapus foto lama, foto yang dihapus selain foto default
                     if ($foto_saat_ini!='foto_default.png'){
-                        unlink("../karyawan/foto/".$foto_saat_ini);
+                        unlink("../penjual/foto/".$foto_saat_ini);
                     }
                     
-                    $sql="update karyawan set
-                    nama_karyawan='$nama',
-                    email='$email',
-                    no_telp='$no_telp',
+                    $sql="update penjual set
+                    namaPenjual='$namaPenjual',
+                    noTelp='$noTelp',
                     alamat='$alamat',
-                    jk='$jk',
                     foto='$foto_baru'
-                    where id_karyawan=$id_karyawan";
+                    where idPenjual=$idPenjual";
                 }
             }else {
-                $sql="update karyawan set
-                nama_karyawan='$nama',
-                email='$email',
-                no_telp='$no_telp',
-                alamat='$alamat',
-                jk='$jk'
-                where id_karyawan=$id_karyawan";
+                $sql="update penjual set
+                namaPenjual='$namaPenjual',
+                noTelp='$noTelp',
+                alamat='$alamat'
+                where idPenjual=$idPenjual";;
             }
 
             
-            //Mengeksekusi query 
             $update=mysqli_query($kon,$sql);
 
        
-            $id_pengguna=$_POST["id_pengguna"];
+            $idPengguna=$_POST["idPengguna"];
             $username=input($_POST["username_baru"]);
 
-            $ambil_password=mysqli_query($kon,"select password from pengguna where id_pengguna=$id_pengguna limit 1");
+            $ambil_password=mysqli_query($kon,"select password from pengguna where idPengguna=$idPengguna limit 1");
             $data = mysqli_fetch_array($ambil_password);
 
             if ($data['password']==$_POST["password"]){
@@ -150,16 +129,14 @@ session_start();
                 $password=md5(input($_POST["password"]));
             }
 
-            //Update username dan password di tabel pengguna
             $sql="update pengguna set
             username='$username',
             password='$password'
-            where id_pengguna=$id_pengguna";
+            where idPengguna=$idPengguna";
             $update_pengguna=mysqli_query($kon,$sql);
 
         }
 
-        //Kondisi apakah berhasil atau tidak dalam mengeksekusi query diatas
         if ($update and $update_pengguna) {
             mysqli_query($kon,"COMMIT");
             header("Location:../../dist/index.php?page=profil&edit=berhasil");
@@ -168,7 +145,6 @@ session_start();
             mysqli_query($kon,"ROLLBACK");
             header("Location:../../dist/index.php?page=profil&edit=gagal");
         }
-        
-    }
+    }    
 ?>
 
