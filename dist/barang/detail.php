@@ -2,7 +2,7 @@
 session_start();
 include '../../config/database.php';
 
-class BarangDetailCarousel {
+class BarangDetailCarouselDenganThumbnail {
     protected $kon;
 
     public function __construct($kon) {
@@ -28,14 +28,12 @@ class BarangDetailCarousel {
 
     public function tampilkanDetail($idBarang) {
         $barang = $this->getBarang($idBarang);
-
         if (!$barang) {
             echo "<div class='alert alert-danger'>Barang tidak ditemukan.</div>";
             return;
         }
 
         $varians = $this->getVarianBarang($barang['kodeBarang']);
-
         if (count($varians) === 0) {
             echo "<div class='alert alert-warning'>Tidak ada varian tersedia.</div>";
             return;
@@ -43,58 +41,68 @@ class BarangDetailCarousel {
 
         echo "<h4>{$barang['namaBarang']} <small class='text-muted'>({$barang['namaKategori']})</small></h4>";
 
-        echo '<div id="carouselVarianBarang" class="carousel slide" data-ride="carousel">';
+        echo '<div id="carouselDetailBarang" class="carousel slide" data-ride="carousel">';
         echo '<div class="carousel-inner">';
 
         foreach ($varians as $index => $varian) {
-            $active = ($index === 0) ? 'active' : '';
+            $active = ($index == 0) ? 'active' : '';
             echo "<div class='carousel-item $active'>";
-            echo "<div class='card text-center'>";
-            echo "<img class='card-img' src='../dist/barang/gambar/{$varian['gambarBarang']}' alt='Varian Gambar'>";
-            echo "<div class='card-body'>";
+            echo "<div class='row'>";
+            echo "<div class='col-md-6 text-center'>";
+            echo "<img class='img-fluid' src='../dist/barang/gambar/{$varian['gambarBarang']}' alt='Gambar Varian {$index}'>";
+            echo "</div>";
+            echo "<div class='col-md-6'>";
             echo "<p><strong>Ukuran:</strong> {$varian['size']}</p>";
             echo "<p><strong>Varian:</strong> {$varian['typeVarian']}</p>";
             echo "<p><strong>Stok:</strong> {$varian['stok']}</p>";
             echo "<p><strong>Harga:</strong> Rp" . number_format($varian['harga'], 0, ',', '.') . "</p>";
 
             if (strtolower($_SESSION['level'] ?? '') === 'pelanggan' && $varian['stok'] > 0) {
-                $link = "index.php?page=keranjang&kodeBarang=" . urlencode($barang['kodeBarang']) . "&idVarian=" . $varian['idVarian'] . "&aksi=pilih_barang";
-                echo "<a href='$link' class='btn btn-dark btn-block'>Tambah ke Keranjang</a>";
+                echo "<a href='index.php?page=keranjang&kodeBarang={$barang['kodeBarang']}&kodeVarian={$varian['kodeVarian']}' class='btn btn-primary btn-sm'>";
+                echo "<i class='fas fa-cart-plus'></i> Tambah ke Keranjang</a>";
             } elseif ($varian['stok'] <= 0) {
                 echo "<div class='alert alert-warning p-1 text-center'>Stok Kosong</div>";
             }
 
-            echo "    </div>";
-            echo "  </div>";
-            echo "</div>";
+            echo "</div></div></div>";
         }
 
         echo '</div>'; 
-
-        echo '<a class="carousel-control-prev" href="#carouselVarianBarang" role="button" data-slide="prev">';
+        
+        echo '<a class="carousel-control-prev" href="#carouselDetailBarang" role="button" data-slide="prev">';
         echo '  <span class="carousel-control-prev-icon" aria-hidden="true"></span>';
         echo '  <span class="sr-only">Previous</span>';
         echo '</a>';
-        echo '<a class="carousel-control-next" href="#carouselVarianBarang" role="button" data-slide="next">';
+        echo '<a class="carousel-control-next" href="#carouselDetailBarang" role="button" data-slide="next">';
         echo '  <span class="carousel-control-next-icon" aria-hidden="true"></span>';
         echo '  <span class="sr-only">Next</span>';
         echo '</a>';
+        echo '</div>';
 
-        echo '</div>'; 
+        echo "<div class='mt-3 d-flex justify-content-center flex-wrap'>";
+        foreach ($varians as $index => $varian) {
+            echo "<img src='../dist/barang/gambar/{$varian['gambarBarang']}' class='img-thumbnail m-1' width='100' height='100' onclick='goToSlide($index)'>";
+        }
+        echo "</div>";
+
+        echo "<script>
+            function goToSlide(index) {
+                const carousel = $('#carouselDetailBarang');
+                carousel.carousel(index);
+            }
+        </script>";
     }
 }
 
-
 $idBarang = $_GET['idBarang'] ?? $_POST['idBarang'] ?? null;
-
 if (!$idBarang) {
     echo "<div class='alert alert-danger'>ID Barang tidak ditemukan.</div>";
     exit;
 }
 
-$handler = new BarangDetailCarousel($kon);
+$handler = new BarangDetailCarouselDenganThumbnail($kon);
 ?>
 
-<div class="container">
+<div class="container mt-4">
     <?php $handler->tampilkanDetail($idBarang); ?>
 </div>

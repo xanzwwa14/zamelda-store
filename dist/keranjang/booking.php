@@ -33,9 +33,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h3 class="mt-4">Selamat <?php echo $_SESSION['nama_anggota'];?></h3>
-                        <p>Pengajuan peminjaman pustaka pada hari ini <?php echo tanggal($tanggal); ?> telah berhasil. Selanjutnya anda diwajibkan untuk datang pada hari dan jam kerja (maksimal 1 x 48 jam) dengan membawa identitas/kartu anggota lalu tunjukan kode peminjaman berikut ini kepada petugas</p>
-                        <h3><span class="badge badge-primary">#<?php echo $_GET['kode_peminjaman'];?></span></h3>
+                        <h3 class="mt-4">Selamat <?php echo $_SESSION['namaPelanggan'];?></h3>
+                        <h3><span class="badge badge-primary">#<?php echo $_GET['kodeTransaksi'];?></span></h3>
                     </div>
                 </div>
             </div>
@@ -46,11 +45,11 @@
                     <div class="col-sm-12">
                         <?php
                             include '../config/database.php';
-                            $kode_peminjaman=$_GET['kode_peminjaman'];
+                            $kodeTransaksi=$_GET['kodeTransaksi'];
                             //Perintah sql untuk menampilkan semua data pada tabel penulis
-                            $sql="select * from pustaka p
-                            inner join detail_peminjaman d on d.kode_pustaka=p.kode_pustaka
-                            where d.kode_peminjaman='$kode_peminjaman'";
+                            $sql="select * from barang p
+                            inner join detail_transaksi d on d.kodeBarang=p.kodeBarang
+                            where d.kodeTransaksi='$kodeTransaksi'";
 
                             $hasil=mysqli_query($kon,$sql);
                             while ($data = mysqli_fetch_array($hasil)):
@@ -59,7 +58,7 @@
                         <div class="col-sm-2">
                             <div class="card">
                                 <div class="card bg-basic">
-                                    <img class="card-img-top" src="../dist/pustaka/gambar/<?php echo $data['gambar_pustaka'];?>"  alt="Card image cap">
+                                    <img class="card-img-top" src="../dist/barang/gambar/<?php echo $data['gambarBarang'];?>"  alt="Card image cap">
                                     <div class="card-body text-center">
                       
     
