@@ -2,10 +2,10 @@
 <?php 
   session_start();
  
-  if (!$_SESSION["idPengguna"]){
-        header("Location:tampilanAwal.php");
-        header("Location:login.php");
-  }else {
+if (!$_SESSION["idPengguna"]){
+    header("Location:tampilanAwal.php");
+    exit;
+}else {
 
     include '../config/database.php';
     $idPengguna=$_SESSION["idPengguna"];

@@ -21,34 +21,29 @@ $query = mysqli_query($kon, "SELECT gambarBarang FROM varianbarang LIMIT 5");
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            color: #393E46;
+            color: #b6afac;
+            background-color: #b6afac;
         }
 
         .slider-container {
-            padding: 60px 40px;
-            background: linear-gradient(rgba(135, 123, 84, 0.6), rgba(0, 0, 0, 0.4)), url('pantai.JPEG') no-repeat center center;
-            background-size: cover;
-            text-align: center;
-            position: relative;
+            padding: 60px 40px; 
             min-height: 100vh;
-            color:black;
-        }
+            text-align: center;
+            color: #fff;
+}
 
         .slider-header img.judul-gambar {
-            max-width: 350px;
+            max-width: 340px;
             height: auto;
-            margin-bottom: 20px;
-            border-radius: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
         }
 
-        .slider-header p {
-            max-width: 800px;
-            margin: 0 auto 30px;
-            font-size: 22px;
-            font-weight: 600;
-            color: #fff;
-            line-height: 1.6;
-        }
+        .slider-header {
+            max-width: fit-content;
+            margin: 0 auto;
+            text-align: center:
+}
 
         .login-button {
             position: absolute;
@@ -65,14 +60,16 @@ $query = mysqli_query($kon, "SELECT gambarBarang FROM varianbarang LIMIT 5");
         }
 
         .login-button:hover {
-            background-color: #e07b00;
+            background-color:rgb(103, 101, 99);
         }
 
         .slider-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 30px;
             margin-top: 40px;
+            padding: 0 20px;
         }
 
         .gallery-item {
@@ -83,6 +80,16 @@ $query = mysqli_query($kon, "SELECT gambarBarang FROM varianbarang LIMIT 5");
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
+
+        .slider-gallery .gallery-item {
+            width: 100%;
+            max-width: 200px;   
+            height: 180px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+}
 
         .gallery-item:hover {
             transform: scale(1.05);
@@ -108,7 +115,7 @@ $query = mysqli_query($kon, "SELECT gambarBarang FROM varianbarang LIMIT 5");
         }
 
         .social-icons a:hover {
-            color: #ff8c00;
+            color:rgb(84, 83, 82);
             transform: scale(1.1);
         }
     </style>
