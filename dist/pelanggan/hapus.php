@@ -2,7 +2,7 @@
 session_start();
 // Koneksi database
 include '../../config/database.php';
-// Memulai transaksi
+
 mysqli_query($kon, "START TRANSACTION");
 
 // Ambil data dari URL
