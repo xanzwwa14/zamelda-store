@@ -146,5 +146,9 @@ session_start();
             header("Location:../../dist/index.php?page=profil&edit=gagal");
         }
     }    
+<<<<<<< HEAD
 ?>
 
+=======
+?>
+>>>>>>> ceeb341c16077fee39f33e460b172b58ed186d4e
